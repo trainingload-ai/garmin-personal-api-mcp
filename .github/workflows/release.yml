@@ -33,7 +33,7 @@ jobs:
       - run: mkdir release-artifacts
       - run: pnpm --dir packages/mcp-server pack --pack-destination ../../release-artifacts
       - name: Publish with npm Trusted Publishing
-        run: npm publish "release-artifacts/trainingloadai-garmin-personal-api-mcp-${GITHUB_REF_NAME#v}.tgz" --access public --provenance
+        run: npm publish "./release-artifacts/trainingloadai-garmin-personal-api-mcp-${GITHUB_REF_NAME#v}.tgz" --access public --provenance
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
