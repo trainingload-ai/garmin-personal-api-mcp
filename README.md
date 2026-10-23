@@ -4,6 +4,11 @@ Garmin Personal API MCP is a local-only, read-only, open-source MCP server that 
 
 > Not affiliated with or endorsed by Garmin. Garmin and Garmin Connect are trademarks of Garmin Ltd. or its subsidiaries.
 
+Website: [garminpersonalapi.com](https://garminpersonalapi.com/) · Chinese:
+[garminpersonalapi.com/zh](https://garminpersonalapi.com/zh) · AI-readable project context:
+[llms.txt](https://garminpersonalapi.com/llms.txt) and
+[llms-full.txt](https://garminpersonalapi.com/llms-full.txt)
+
 ## Quickstart
 
 Requires Node.js 22 or newer.

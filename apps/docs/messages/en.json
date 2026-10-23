@@ -154,6 +154,45 @@
       ]
     ]
   },
+  "projectFacts": {
+    "kicker": "Project facts",
+    "title": "Garmin Personal API MCP, in precise terms.",
+    "description": "A concise, source-backed summary for people, search engines, and AI systems.",
+    "items": [
+      {
+        "label": "What it is",
+        "value": "An open-source Node.js MCP server for the official Garmin Personal API."
+      },
+      {
+        "label": "How it runs",
+        "value": "A local process launched by your AI client; there is no hosted MCP endpoint."
+      },
+      {
+        "label": "Permissions",
+        "value": "25 read-only tools backed by Garmin Personal API GET operations."
+      },
+      {
+        "label": "Credentials",
+        "value": "The Personal API key and cached token stay in a user-only file on your computer."
+      },
+      {
+        "label": "Data covered",
+        "value": "Activities, FIT recordings, sleep, HRV, Body Battery, heart rate, stress, wellness, and profile context."
+      },
+      {
+        "label": "Runtime",
+        "value": "macOS, Windows, or Linux with Node.js 22+ and an AI client that can launch a local MCP server."
+      }
+    ],
+    "sourcesTitle": "Primary sources",
+    "sourcesDescription": "Verify the API, protocol, package, and implementation at their original sources.",
+    "sourceLabels": {
+      "garmin": "Garmin Personal API",
+      "mcp": "Model Context Protocol",
+      "github": "Source code",
+      "npm": "npm package"
+    }
+  },
   "quickstart": {
     "kicker": "Quickstart",
     "title": "Send one line to your AI client to connect to the Garmin Personal API.",
@@ -427,6 +466,7 @@
     "npm": "npm package",
     "contract": "Agent setup contract",
     "security": "Security policy",
+    "llms": "AI-readable project facts",
     "copyrightBefore": "© 2026 Trainingload.ai · Open source under the ",
     "license": "MIT License",
     "copyrightAfter": ".",

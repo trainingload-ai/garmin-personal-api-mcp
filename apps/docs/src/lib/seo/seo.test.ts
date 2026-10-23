@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import robots from '@/app/robots';
+import robots, { aiCrawlerUserAgents } from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { getMessagesForLocale } from '@/i18n/messages';
+import { site } from '@/lib/site';
 
+import { buildLlmsFullTxt, buildLlmsTxt } from './llms';
 import { createLocalizedMetadata } from './metadata';
 import { createOpenGraphImageUrl } from './open-graph';
 import { serializeStructuredData, structuredDataForLocale } from './structured-data';
@@ -60,16 +62,28 @@ describe('structured data', () => {
   it.each(['en', 'zh'] as const)('shares visible HowTo and FAQ content for %s', (locale) => {
     const schemas = structuredDataForLocale(locale);
     const copy = getMessagesForLocale(locale);
+    const webpage = schemas.find((schema) => schema['@type'] === 'WebPage');
+    const application = schemas.find((schema) => schema['@type'] === 'SoftwareApplication');
     const howTo = schemas.find((schema) => schema['@type'] === 'HowTo');
     const faq = schemas.find((schema) => schema['@type'] === 'FAQPage');
 
     expect(schemas.map((schema) => schema['@type'])).toEqual([
       'WebSite',
+      'WebPage',
       'SoftwareSourceCode',
       'SoftwareApplication',
       'HowTo',
       'FAQPage',
     ]);
+    expect(webpage).toMatchObject({
+      url: canonicalUrl(locale),
+      citation: [site.garminPersonalApi, site.mcp, site.github, site.npm],
+    });
+    expect(application).toMatchObject({
+      softwareVersion: site.version,
+      sameAs: [site.github, site.npm],
+      isBasedOn: site.garminPersonalApi,
+    });
     expect(howTo).toMatchObject({ name: copy.quickstart.title });
     expect(howTo).toHaveProperty('step', expect.arrayContaining([
       expect.objectContaining({ name: copy.quickstart.keyTitle }),
@@ -100,5 +114,21 @@ describe('crawl surface', () => {
       host: 'https://garminpersonalapi.com',
       sitemap: 'https://garminpersonalapi.com/sitemap.xml',
     });
+    expect(robots().rules).toEqual(expect.arrayContaining([
+      expect.objectContaining({ userAgent: [...aiCrawlerUserAgents], allow: '/' }),
+    ]));
+  });
+
+  it('publishes concise and complete machine-readable project context', () => {
+    const concise = buildLlmsTxt();
+    const complete = buildLlmsFullTxt();
+
+    expect(concise).toContain(`# ${site.name}`);
+    expect(concise).toContain(site.packageName);
+    expect(concise).toContain(site.llmsFull);
+    expect(complete).toContain(`Version: ${site.version}`);
+    expect(complete).toContain(site.setupPrompt);
+    expect(complete).toContain('no hosted MCP endpoint');
+    expect(complete).toContain('## 中文摘要');
   });
 });

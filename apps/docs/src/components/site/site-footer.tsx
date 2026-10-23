@@ -61,7 +61,8 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
         { href: site.github, label: copy.github, external: true },
         { href: site.npm, label: copy.npm, external: true },
         { href: site.agentInstructions, label: copy.contract, external: true },
-        { href: `${site.github}/blob/main/SECURITY.md`, label: copy.security, external: true },
+        { href: site.security, label: copy.security, external: true },
+        { href: site.llms, label: copy.llms },
       ],
     },
   ] satisfies Array<{ id: string; title: string; links: FooterLink[] }>;
@@ -89,7 +90,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
         <Separator />
         <div className="flex flex-col gap-3 px-5 py-5 text-xs leading-5 text-muted-foreground sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
           <p>
-            {copy.copyrightBefore}<a className="underline underline-offset-4 hover:text-foreground" href={`${site.github}/blob/main/LICENSE`}>{copy.license}</a>{copy.copyrightAfter}
+            {copy.copyrightBefore}<a className="underline underline-offset-4 hover:text-foreground" href={site.license}>{copy.license}</a>{copy.copyrightAfter}
           </p>
           <p className="max-w-2xl lg:text-right">{copy.trademark}</p>
         </div>

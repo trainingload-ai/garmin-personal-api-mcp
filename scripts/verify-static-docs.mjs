@@ -29,6 +29,7 @@ for (const page of pages) {
   assert.ok(html.includes('hrefLang="zh-CN"'), `${page.file} is missing the Chinese hreflang`);
   assert.ok(html.includes('hrefLang="x-default"'), `${page.file} is missing the default hreflang`);
   assert.ok(html.includes('type="application/ld+json"'), `${page.file} is missing structured data`);
+  assert.ok(html.includes('id="project-facts"'), `${page.file} is missing the citation-ready project facts`);
   assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1, `${page.file} must contain exactly one h1`);
 }
 
@@ -39,6 +40,24 @@ await Promise.all([
   access(path.join(outputDirectory, 'og/zh.png')),
   access(path.join(outputDirectory, 'robots.txt')),
   access(path.join(outputDirectory, 'sitemap.xml')),
+  access(path.join(outputDirectory, 'llms.txt')),
+  access(path.join(outputDirectory, 'llms-full.txt')),
 ]);
 
-console.log('Static docs export verified: / and /zh are ready to deploy.');
+const [robotsText, llmsText, llmsFullText] = await Promise.all([
+  readFile(path.join(outputDirectory, 'robots.txt'), 'utf8'),
+  readFile(path.join(outputDirectory, 'llms.txt'), 'utf8'),
+  readFile(path.join(outputDirectory, 'llms-full.txt'), 'utf8'),
+]);
+const publicPackage = JSON.parse(await readFile(path.resolve('packages/mcp-server/package.json'), 'utf8'));
+
+assert.ok(robotsText.includes('User-Agent: OAI-SearchBot'), 'robots.txt must allow OpenAI search');
+assert.ok(robotsText.includes('User-Agent: Claude-SearchBot'), 'robots.txt must allow Claude search');
+assert.ok(robotsText.includes('User-Agent: PerplexityBot'), 'robots.txt must allow Perplexity search');
+assert.ok(llmsText.includes('# Garmin Personal API MCP'), 'llms.txt is missing the project identity');
+assert.ok(llmsText.includes('llms-full.txt'), 'llms.txt is missing the complete-context link');
+assert.ok(llmsText.includes(`Current version: ${publicPackage.version}`), 'llms.txt has a stale package version');
+assert.ok(llmsFullText.includes('## 中文摘要'), 'llms-full.txt is missing its Chinese summary');
+assert.ok(llmsFullText.includes('Connect @trainingloadai/garmin-personal-api-mcp'), 'llms-full.txt is missing the setup request');
+
+console.log('Static docs export verified: /, /zh, and GEO resources are ready to deploy.');

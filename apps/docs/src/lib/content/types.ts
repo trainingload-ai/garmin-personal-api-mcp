@@ -62,6 +62,20 @@ export type LandingMessages = {
     authDescription: string;
     facts: Array<[label: string, value: string]>;
   };
+  projectFacts: {
+    kicker: string;
+    title: string;
+    description: string;
+    items: Array<{ label: string; value: string }>;
+    sourcesTitle: string;
+    sourcesDescription: string;
+    sourceLabels: {
+      garmin: string;
+      mcp: string;
+      github: string;
+      npm: string;
+    };
+  };
   quickstart: {
     kicker: string;
     title: string;
@@ -161,6 +175,7 @@ export type LandingMessages = {
     npm: string;
     contract: string;
     security: string;
+    llms: string;
     copyrightBefore: string;
     license: string;
     copyrightAfter: string;

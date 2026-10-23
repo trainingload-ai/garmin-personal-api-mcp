@@ -9,6 +9,7 @@ import { FinalCta } from './final-cta';
 import { Hero } from './hero';
 import { HowItWorks } from './how-it-works';
 import { Privacy } from './privacy';
+import { ProjectFacts } from './project-facts';
 import { Quickstart } from './quickstart';
 
 export function LandingPage({ locale }: { locale: Locale }) {
@@ -17,6 +18,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeStructuredData(locale) }} />
       <Hero locale={locale} />
       <HowItWorks />
+      <ProjectFacts />
       <Quickstart />
       <ClientConfig />
       <Capabilities />

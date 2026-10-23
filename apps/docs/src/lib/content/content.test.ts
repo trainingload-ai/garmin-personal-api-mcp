@@ -27,6 +27,7 @@ describe('localized landing content', () => {
     expect(copy.hero.eyebrow).toContain('Garmin Personal API');
     expect(copy.hero.description).toContain('Garmin Personal API');
     expect(copy.how.title).toContain('Garmin Personal API');
+    expect(copy.projectFacts.title).toContain('Garmin Personal API');
     expect(copy.data.kicker).toContain('Garmin Personal API');
     expect(copy.faq.title).toContain('Garmin Personal API');
   });
@@ -39,6 +40,7 @@ describe('localized landing content', () => {
     expect(zh.clients.windowsConfig).toBe('Windows MCP 配置');
     expect(zh.hero.description).not.toContain('stdio');
     expect(zh.hero.trust).toContain('完全本地运行');
+    expect(zh.projectFacts.description).toContain('可核验');
     expect(serialized).not.toMatch(/\b(?:Agent|Host|bearer token)\b/);
   });
 });
