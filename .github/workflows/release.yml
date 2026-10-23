@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+    environment: npm
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          registry-url: https://registry.npmjs.org
+      - name: Install npm with trusted-publishing support
+        run: npm install --global npm@11.21.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test:coverage
+      - run: pnpm smoke:pack
+      - name: Verify tag matches package version
+        run: node -e "const p=require('./packages/mcp-server/package.json'); if (process.env.GITHUB_REF_NAME !== 'v'+p.version) { throw new Error('Tag and package version differ') }"
+      - run: mkdir release-artifacts
+      - run: pnpm --dir packages/mcp-server pack --pack-destination ../../release-artifacts
+      - name: Publish with npm Trusted Publishing
+        run: npm publish "release-artifacts/trainingloadai-garmin-personal-api-mcp-${GITHUB_REF_NAME#v}.tgz" --access public --provenance
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release-artifacts/*.tgz --generate-notes --verify-tag

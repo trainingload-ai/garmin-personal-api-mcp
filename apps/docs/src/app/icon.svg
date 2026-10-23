@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Garmin Personal API MCP">
+  <rect width="64" height="64" rx="8" fill="#0a0c0b"/>
+  <path d="M14 38V20h25v7H22v15h17v-5H29v-7h18v19H14V38Z" fill="#34d399"/>
+  <path d="M48 14h3v12h-3zM48 30h3v3h-3z" fill="#f4f7f5"/>
+</svg>

@@ -1,0 +1,60 @@
+{
+  "name": "@trainingloadai/garmin-personal-api-mcp",
+  "version": "0.1.0",
+  "description": "Local-only, read-only MCP server for your own Garmin Personal API data",
+  "type": "module",
+  "bin": {
+    "garmin-personal-api-mcp": "dist/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trainingload-ai/garmin-personal-api-mcp.git"
+  },
+  "homepage": "https://garminpersonalapi.com",
+  "bugs": {
+    "url": "https://github.com/trainingload-ai/garmin-personal-api-mcp/issues"
+  },
+  "keywords": [
+    "garmin",
+    "mcp",
+    "model-context-protocol",
+    "personal-api",
+    "fitness"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx src/index.ts",
+    "prepack": "pnpm build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@garmin/fitsdk": "^21.218.0",
+    "@modelcontextprotocol/server": "^2.3.1",
+    "fflate": "^0.8.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.3.1",
+    "@vitest/coverage-v8": "^4.0.17",
+    "tsx": "^4.20.6",
+    "vitest": "^4.0.17"
+  }
+}

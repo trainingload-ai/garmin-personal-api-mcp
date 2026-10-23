@@ -1,0 +1,436 @@
+{
+  "metadata": {
+    "title": "Garmin Personal API MCP — Local, Read-only Garmin MCP Server",
+    "description": "A local, read-only, open-source Garmin MCP server for activities, sleep, HRV, Body Battery, heart rate, and wellness data through the official Garmin Personal API.",
+    "keywords": [
+      "Garmin Personal API",
+      "Garmin Personal API MCP",
+      "Garmin MCP server",
+      "Garmin Connect MCP server",
+      "Garmin activities API",
+      "Garmin FIT data",
+      "local MCP server"
+    ]
+  },
+  "common": {
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "skipToContent": "Skip to main content",
+  "nav": {
+    "label": "Primary navigation",
+    "how": "How it works",
+    "quickstart": "Quickstart",
+    "data": "Garmin data",
+    "security": "Security",
+    "faq": "FAQ",
+    "github": "GitHub",
+    "home": "Garmin Personal API MCP home",
+    "language": "Select language",
+    "theme": "Select color theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "menu": "Navigation",
+    "menuDescription": "Explore setup, Garmin data, privacy, and frequently asked questions.",
+    "close": "Close"
+  },
+  "hero": {
+    "eyebrow": "Garmin Personal API MCP",
+    "titleLead": "Your Garmin data,",
+    "titleAccent": "ready to ask.",
+    "description": "Use the official Garmin Personal API to bring your activities, sleep, HRV, Body Battery, heart rate, and wellness data into a compatible AI client. The open-source server runs entirely on your computer and never asks for your Garmin password.",
+    "start": "Start locally",
+    "source": "View source",
+    "commandLabel": "Setup request for your AI client",
+    "trustLabel": "Garmin Personal API MCP guarantees",
+    "trust": [
+      "25 read-only tools",
+      "Runs entirely locally",
+      "Official Garmin Personal API",
+      "No Garmin password"
+    ]
+  },
+  "terminal": {
+    "summary": "Animated examples show a local MCP host calling Garmin recovery, activity, sleep, HRV, stress, and Body Battery tools before returning a plain-text answer.",
+    "connected": "connected",
+    "demo": "demo",
+    "scenarios": [
+      {
+        "question": "How was my recovery yesterday?",
+        "calls": [
+          [
+            "garmin_get_day",
+            "Daily summary and recovery signals"
+          ],
+          [
+            "garmin_get_sleep",
+            "Sleep duration and sleep stages"
+          ],
+          [
+            "garmin_get_hrv",
+            "Overnight HRV status and values"
+          ]
+        ],
+        "answer": "You slept 7 h 42 m, overnight HRV was inside your recent baseline, and Body Battery rose by 61 points. Yesterday looks recovered enough for a normal training day, but this is not a medical or readiness diagnosis."
+      },
+      {
+        "question": "Show me what changed in my latest long run.",
+        "calls": [
+          [
+            "garmin_search_activities",
+            "Find the latest running activity"
+          ],
+          [
+            "garmin_get_activity",
+            "Read summary, distance, and timing"
+          ],
+          [
+            "garmin_get_activity_recording",
+            "Inspect laps, heart rate, and power"
+          ]
+        ],
+        "answer": "The run was 18.4 km. Your final 5 km was 11 sec/km faster while average heart rate rose 6 bpm. Power stayed comparatively stable, so the faster finish did not come with a matching power spike."
+      },
+      {
+        "question": "Did sleep and stress change this week?",
+        "calls": [
+          [
+            "garmin_get_sleep_summaries",
+            "Compare seven nights of sleep"
+          ],
+          [
+            "garmin_get_stress",
+            "Read daily stress summaries"
+          ],
+          [
+            "garmin_get_body_battery",
+            "Check charge and drain patterns"
+          ]
+        ],
+        "answer": "Average sleep was 24 minutes shorter than the previous week and high-stress time increased on three workdays. Body Battery also started those mornings lower. That is a useful pattern to review, not proof of a medical cause."
+      }
+    ]
+  },
+  "how": {
+    "kicker": "How it works",
+    "title": "Garmin Personal API data, fetched locally when you ask.",
+    "description": "When you ask a question, the local server fetches the required data from the Garmin Personal API and returns the result to your AI client. This project runs no cloud relay and stores no Garmin data remotely; any further processing depends on the AI provider and privacy policy you choose.",
+    "flow": [
+      {
+        "index": "01",
+        "title": "Your local MCP host",
+        "description": "A compatible AI client chooses a Garmin tool for the question you asked. No browser extension or hosted connector is required.",
+        "meta": "MCP host"
+      },
+      {
+        "index": "02",
+        "title": "The local MCP server",
+        "description": "The Node.js process validates inputs, controls date ranges and sample volume, then returns structured results to your AI client.",
+        "meta": "local process"
+      },
+      {
+        "index": "03",
+        "title": "Garmin Personal API",
+        "description": "Your token is sent over HTTPS directly to the Garmin Personal API. The server exposes read operations only.",
+        "meta": "official API · HTTPS"
+      }
+    ],
+    "authKicker": "Authentication without password scraping",
+    "authTitle": "Your Garmin Personal API key completes authorization on your computer—not in chat.",
+    "authDescription": "Create a Garmin Personal API key in Garmin Connect and authorize once. The CLI stores the key and cached bearer token in a local file readable only by you. It never uses the username-and-password scraping flow found in older Garmin Connect integrations.",
+    "facts": [
+      [
+        "Credential",
+        "Personal API key"
+      ],
+      [
+        "Runtime",
+        "entirely local"
+      ],
+      [
+        "Operations",
+        "GET / read-only"
+      ]
+    ]
+  },
+  "quickstart": {
+    "kicker": "Quickstart",
+    "title": "Send one line to your AI client to connect to the Garmin Personal API.",
+    "description": "Copy the request below into Codex, Claude Code, Cursor, or another AI client that can work locally. The client can check the runtime, install and configure the package, connect the tools, and open the private local authorization page; you only enter your Garmin Personal API key there.",
+    "keyTitle": "Prepare your Garmin Personal API key",
+    "keyDescription": "Create your Garmin Personal API key on Garmin Connect's dedicated Personal API Token page. Garmin shows a new key only once, so copy it before leaving—but never paste it into an AI chat. You will enter it on a private page served only by this computer.",
+    "keyLink": "Open Personal API Token settings ↗",
+    "agentTitle": "Copy one line into your AI client",
+    "agentDescription": "Codex, Claude Code, Cursor, or another capable coding agent can identify the npm package, read its setup instructions, and handle the client-specific details.",
+    "commandLabel": "Paste into Codex, Claude Code, Cursor, or another agent",
+    "contractBefore": "The detailed, machine-readable flow lives in the repository’s ",
+    "contractLink": "AGENTS.md ↗",
+    "contractAfter": ", not in your prompt.",
+    "localTitle": "Connect on the local page",
+    "localDescriptionBefore": "The auth command opens a temporary page at ",
+    "localDescriptionAfter": ". Paste the key there—not in chat. The page validates it with Garmin, saves it with user-only permissions, then closes its local listener.",
+    "clientHandles": "Your client handles",
+    "reloadTitle": "Reload your client, then ask",
+    "reloadDescription": "Restart once so your client can load the newly registered Garmin tools. Then ask a question normally—there are no commands or tool names to remember.",
+    "examplePrompt": "“Summarize my sleep, HRV, Body Battery, stress, and activities for yesterday.”",
+    "docsBefore": "Prefer the official details? Read the ",
+    "docsCodex": "Codex",
+    "docsClaude": "Claude Code",
+    "docsCursor": "Cursor",
+    "docsOr": "or",
+    "docsAfter": " MCP guide."
+  },
+  "clients": {
+    "kicker": "Manual setup · advanced",
+    "title": "Prefer to wire it yourself?",
+    "description": "The one-line agent flow above is the recommended path. These exact commands are for developers who want to inspect or configure the local process connection themselves.",
+    "transport": "Transport",
+    "transportValue": "local process (stdio)",
+    "protocol": "Protocol test",
+    "protocolValue": "Initialize · List Tools · Call Tool",
+    "verified": "Last verified",
+    "verifiedValue": "October 23, 2026",
+    "note": "This package never needs a server URL, Docker container, or hosted account. Restart the client after changing its MCP configuration.",
+    "tabsLabel": "MCP configuration by client",
+    "source": "From source",
+    "developmentOnly": "Development only",
+    "windowsConfig": "Windows MCP configuration"
+  },
+  "capabilities": {
+    "kicker": "What you can ask",
+    "title": "Raw Garmin data, shaped for a useful conversation.",
+    "description": "Twenty-five focused tools turn Garmin Personal API data into bounded, useful context while preserving the original units.",
+    "groups": [
+      {
+        "index": "01",
+        "title": "Activities & FIT",
+        "description": "Search Garmin activities, inspect workout steps, or decode FIT laps, power, heart rate, cadence, and sampled records.",
+        "tools": [
+          "search_activities",
+          "get_activity",
+          "get_activity_recording"
+        ]
+      },
+      {
+        "index": "02",
+        "title": "Daily recovery",
+        "description": "Bring sleep, HRV, Body Battery, stress, daily summaries, and fitness age into one grounded conversation.",
+        "tools": [
+          "get_day",
+          "get_sleep",
+          "get_hrv",
+          "get_body_battery"
+        ]
+      },
+      {
+        "index": "03",
+        "title": "Sleep & HRV",
+        "description": "Read one night in detail or compare bounded sleep and overnight HRV summaries across a recent period.",
+        "tools": [
+          "get_sleep",
+          "get_sleep_summaries",
+          "get_hrv_summaries"
+        ]
+      },
+      {
+        "index": "04",
+        "title": "Heart & oxygen",
+        "description": "Query heart-rate summaries, configured heart-rate zones, resting heart rate, and pulse oximetry data.",
+        "tools": [
+          "get_heart_rate",
+          "get_heart_rate_zones",
+          "get_spo2"
+        ]
+      },
+      {
+        "index": "05",
+        "title": "Wellness & nutrition",
+        "description": "Read steps, hydration, stress, weight, food logs, wellness activities, and cycle data without account writes.",
+        "tools": [
+          "get_steps",
+          "get_hydration",
+          "get_weight",
+          "+ 5 more"
+        ]
+      },
+      {
+        "index": "06",
+        "title": "Profile context",
+        "description": "Use profile settings and fitness age to interpret Garmin values in the context of the person they belong to.",
+        "tools": [
+          "get_profile",
+          "get_heart_rate_zones"
+        ]
+      }
+    ],
+    "tryAsking": "Try asking",
+    "promptTitle": "Questions that connect your Garmin signals.",
+    "prompts": [
+      [
+        "Readiness",
+        "Compare my last seven days of HRV, sleep, and Body Battery. What changed?"
+      ],
+      [
+        "Training",
+        "Find my latest long run and summarize its laps, heart rate, and power drift."
+      ],
+      [
+        "Habits",
+        "How did sleep duration and stress relate to my activity volume this month?"
+      ]
+    ]
+  },
+  "data": {
+    "kicker": "Garmin Personal API data",
+    "title": "One local interface for activity, recovery, and health questions.",
+    "description": "The server maps Garmin Personal API endpoints to twenty-five deliberate MCP tools—not one oversized endpoint and not a generic scraper.",
+    "topics": [
+      {
+        "index": "A",
+        "title": "Garmin activity API and FIT recordings",
+        "body": "Search activities by date, sport, or title; inspect the activity summary and workout steps; then decode a Garmin FIT file only when lap or sampled recording detail is needed. Power, pace, cadence, heart rate, temperature, and GPS coordinates stay tied to their original units.",
+        "examples": [
+          "latest running activity",
+          "lap and power drift",
+          "FIT samples on demand"
+        ]
+      },
+      {
+        "index": "B",
+        "title": "Garmin sleep, HRV, and Body Battery data",
+        "body": "Read a single day or compare summaries across a bounded range. Sleep stages, overnight HRV, Body Battery charge and drain, and stress can be placed in the same answer without pretending that a wellness signal is a medical diagnosis.",
+        "examples": [
+          "sleep stages",
+          "HRV summaries",
+          "Body Battery trend"
+        ]
+      },
+      {
+        "index": "C",
+        "title": "Heart rate and daily health summaries",
+        "body": "Query daily summaries, steps, hydration, continuous heart-rate aggregates, SpO2, weight, food logs, and wellness activities. Exact high-frequency samples are omitted by default so a simple Garmin health question does not flood the model context.",
+        "examples": [
+          "resting heart rate",
+          "daily steps and stress",
+          "weight and hydration"
+        ]
+      },
+      {
+        "index": "D",
+        "title": "Profile, heart-rate zones, and fitness context",
+        "body": "Use the Garmin profile, configured heart-rate zones, fitness age, and cycle data to interpret a number in the context of the person it belongs to. Every tool remains a data retrieval tool; it does not issue a diagnosis or edit a Garmin account.",
+        "examples": [
+          "heart-rate zones",
+          "fitness age",
+          "profile-aware answers"
+        ]
+      }
+    ],
+    "examplesLabel": "examples"
+  },
+  "privacy": {
+    "kicker": "Privacy boundary",
+    "title": "A local Garmin MCP with a boundary you can inspect.",
+    "description": "This project does not host or forward your Garmin data. Tool results do enter the AI client and model you choose, where that provider's privacy policy applies.",
+    "link": "Read the security policy ↗",
+    "boundaries": [
+      [
+        "Credentials stay local",
+        "Your Garmin Personal API key and cached bearer token are stored only on your computer."
+      ],
+      [
+        "Read-only by construction",
+        "Every exposed Garmin operation is a GET. There are no workout, device, or account writes."
+      ],
+      [
+        "Private by default",
+        "High-frequency samples and exact FIT coordinates are omitted unless explicitly requested."
+      ],
+      [
+        "No telemetry",
+        "The server has no analytics, crash reporting, account system, database, or remote relay."
+      ]
+    ]
+  },
+  "faq": {
+    "kicker": "FAQ",
+    "title": "Clear answers about the Garmin Personal API and MCP.",
+    "description": "Exact answers about API keys, local operation, client support, FIT activity data, privacy, and read-only limits.",
+    "answers": "answers",
+    "items": [
+      {
+        "question": "What is Garmin Personal API MCP?",
+        "answer": "It is an open-source Node.js MCP server that exposes your own Garmin data as twenty-five read-only tools. A compatible AI client launches it directly on your computer; this project does not run a hosted Garmin connector."
+      },
+      {
+        "question": "Where do I create a Garmin Personal API key?",
+        "answer": "Create the key on Garmin Connect's dedicated Personal API Token settings page and copy it immediately because Garmin shows it only once. Then run the local auth command. The CLI exchanges the key for a bearer token and stores both only in a user-only file on your computer."
+      },
+      {
+        "question": "Does this use the official Garmin Personal API?",
+        "answer": "Yes. The server uses the official Garmin Personal API for data requests and Garmin’s official FIT SDK for activity recordings. It does not use a username-and-password Garmin Connect scraper."
+      },
+      {
+        "question": "Can it change my Garmin account or push workouts to a device?",
+        "answer": "No. v0.1 exposes read-only operations backed by Garmin Personal API GET endpoints. It cannot create workouts, update profile data, change settings, or push content to a Garmin device."
+      },
+      {
+        "question": "Can I use this Garmin MCP with Claude Desktop, Cursor, Codex, or VS Code?",
+        "answer": "Yes, when the installed client can launch a local MCP server. This page has copy-and-paste setup requests for Codex, Claude Code, and Cursor. Claude Desktop, VS Code, and other clients that support local MCP servers can use the generic npx configuration in the advanced setup section."
+      },
+      {
+        "question": "Can my AI client install and configure Garmin Personal API MCP for me?",
+        "answer": "Yes. Paste the tailored setup request into Codex, Claude Code, or Cursor. Its agent can check the local runtime, run the package, register the local MCP server, and verify the connection. The auth command opens a temporary 127.0.0.1 page where you enter the Garmin API key yourself; the key never belongs in chat."
+      },
+      {
+        "question": "Does my Garmin data stay entirely on my computer?",
+        "answer": "The API key, token cache, and server stay local, and this project runs no relay. Tool results are returned to the MCP host you selected and may be processed by its model under that provider’s privacy policy."
+      },
+      {
+        "question": "Can an AI inspect Garmin FIT activity data?",
+        "answer": "Yes. The activity recording tool can decode laps, sessions, and sampled FIT records such as heart rate, power, cadence, pace, temperature, and coordinates. High-frequency samples and exact GPS coordinates require explicit options."
+      },
+      {
+        "question": "Which operating systems and Node.js versions are supported?",
+        "answer": "Node.js 20 or newer is required on macOS, Windows, or Linux. Windows hosts that cannot execute npx directly can launch it through cmd /c, as shown in the configuration tabs."
+      },
+      {
+        "question": "Why did the local Garmin MCP server fail to start?",
+        "answer": "Run npx -y @trainingloadai/garmin-personal-api-mcp doctor. It checks Node.js, the credential source, local file permissions, Garmin token exchange, and a read-only profile request without starting a remote service."
+      }
+    ]
+  },
+  "finalCta": {
+    "kicker": "One setup request",
+    "titleLineOne": "Paste one line.",
+    "titleLineTwo": "Let your client handle the rest.",
+    "description": "Paste the package request into Codex, Claude Code, Cursor, or another capable agent. It finds the setup instructions, opens the private local Garmin Personal API authorization page, and verifies the connection.",
+    "commandLabel": "Setup request",
+    "steps": "See the four steps",
+    "github": "GitHub"
+  },
+  "footer": {
+    "description": "Ask questions about your Garmin Personal API data in the AI client you already use.",
+    "status": "Fully local · Read-only",
+    "start": "Start",
+    "how": "How it works",
+    "quickstart": "Quickstart",
+    "clients": "Client setup",
+    "data": "Garmin data",
+    "tools": "25 read-only tools",
+    "dataGuide": "Data guide",
+    "privacy": "Privacy & security",
+    "faq": "FAQ",
+    "project": "Project",
+    "github": "GitHub",
+    "npm": "npm package",
+    "contract": "Agent setup contract",
+    "security": "Security policy",
+    "copyrightBefore": "© 2026 Trainingload.ai · Open source under the ",
+    "license": "MIT License",
+    "copyrightAfter": ".",
+    "trademark": "Not affiliated with or endorsed by Garmin. Garmin and Garmin Connect are trademarks of Garmin Ltd. or its subsidiaries.",
+    "home": "Garmin Personal API MCP home"
+  }
+}

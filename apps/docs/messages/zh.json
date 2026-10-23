@@ -1,0 +1,436 @@
+{
+  "metadata": {
+    "title": "Garmin Personal API MCP｜本地只读的 Garmin MCP 服务",
+    "description": "通过官方 Garmin Personal API，在本地以只读方式把活动、睡眠、HRV、Body Battery、心率与健康数据接入 AI 客户端。",
+    "keywords": [
+      "Garmin Personal API",
+      "Garmin Personal API MCP",
+      "Garmin MCP 服务",
+      "Garmin Connect MCP 服务",
+      "Garmin 活动 API",
+      "Garmin FIT 数据",
+      "本地 MCP 服务"
+    ]
+  },
+  "common": {
+    "copy": "复制",
+    "copied": "已复制"
+  },
+  "skipToContent": "跳到主要内容",
+  "nav": {
+    "label": "主导航",
+    "how": "工作原理",
+    "quickstart": "快速接入",
+    "data": "Personal API 数据",
+    "security": "隐私与安全",
+    "faq": "常见问题",
+    "github": "GitHub",
+    "home": "Garmin Personal API MCP 首页",
+    "language": "选择语言",
+    "theme": "选择颜色主题",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "跟随系统",
+    "menu": "导航",
+    "menuDescription": "了解接入步骤、Garmin Personal API 数据范围、隐私边界和常见问题。",
+    "close": "关闭"
+  },
+  "hero": {
+    "eyebrow": "Garmin Personal API MCP",
+    "titleLead": "Garmin 数据，",
+    "titleAccent": "想问就问。",
+    "description": "通过官方 Garmin Personal API，把活动、睡眠、HRV、Body Battery、心率和健康数据接入你常用的 AI 客户端。服务完全在本机运行，全程不需要 Garmin 密码。",
+    "start": "开始本地接入",
+    "source": "查看源码",
+    "commandLabel": "交给 AI 客户端的接入指令",
+    "trustLabel": "Garmin Personal API MCP 的使用边界",
+    "trust": [
+      "25 个只读工具",
+      "完全本地运行",
+      "官方 Garmin Personal API",
+      "无需 Garmin 密码"
+    ]
+  },
+  "terminal": {
+    "summary": "动画展示 AI 客户端如何调用本地 Garmin 工具，查询恢复、活动、睡眠、HRV、压力和 Body Battery，再整理成可读答案。",
+    "connected": "已连接",
+    "demo": "演示",
+    "scenarios": [
+      {
+        "question": "我昨天恢复得怎么样？",
+        "calls": [
+          [
+            "garmin_get_day",
+            "读取每日摘要与恢复信号"
+          ],
+          [
+            "garmin_get_sleep",
+            "读取睡眠时长与睡眠阶段"
+          ],
+          [
+            "garmin_get_hrv",
+            "读取夜间 HRV 状态与数值"
+          ]
+        ],
+        "answer": "昨晚睡眠 7 小时 42 分钟，夜间 HRV 仍在近期基线内，Body Battery 回升了 61 点。整体恢复信号支持一次常规训练，但这些数据不能替代医疗判断或训练建议。"
+      },
+      {
+        "question": "最近一次长跑，后半程有什么变化？",
+        "calls": [
+          [
+            "garmin_search_activities",
+            "查找最近一次跑步活动"
+          ],
+          [
+            "garmin_get_activity",
+            "读取摘要、距离与时间"
+          ],
+          [
+            "garmin_get_activity_recording",
+            "检查分圈、心率与功率"
+          ]
+        ],
+        "answer": "全程 18.4 公里。最后 5 公里的平均配速每公里快了 11 秒，平均心率高了 6 bpm，但功率基本稳定，说明末段提速并不是靠短时功率突增完成的。"
+      },
+      {
+        "question": "这周的睡眠和压力有变化吗？",
+        "calls": [
+          [
+            "garmin_get_sleep_summaries",
+            "比较七晚睡眠"
+          ],
+          [
+            "garmin_get_stress",
+            "读取每日压力摘要"
+          ],
+          [
+            "garmin_get_body_battery",
+            "检查充能与消耗规律"
+          ]
+        ],
+        "answer": "本周平均睡眠比上周少了 24 分钟，其中三个工作日的高压力时段变多，第二天早晨的 Body Battery 也更低。这个趋势值得继续观察，但不能据此判断医学原因。"
+      }
+    ]
+  },
+  "how": {
+    "kicker": "工作原理",
+    "title": "Garmin Personal API 数据，由本机按需读取。",
+    "description": "当你提问时，本地服务会通过 Garmin Personal API 读取所需数据，再把结果返回给 AI 客户端。本项目不提供云端中转，也不会在远程服务器保存你的 Garmin 数据；后续如何处理结果，取决于你选择的 AI 服务商及其隐私政策。",
+    "flow": [
+      {
+        "index": "01",
+        "title": "你正在使用的 AI 客户端",
+        "description": "客户端理解问题后选择合适的 Garmin 工具，无需浏览器插件，也不依赖托管连接器。",
+        "meta": "MCP 客户端"
+      },
+      {
+        "index": "02",
+        "title": "本地 MCP 进程",
+        "description": "Node.js 进程负责校验参数、限制日期范围与样本量，再把结构化结果返回给 AI 客户端。",
+        "meta": "本机进程"
+      },
+      {
+        "index": "03",
+        "title": "Garmin Personal API",
+        "description": "服务携带你的令牌，通过 HTTPS 直接请求 Garmin Personal API；所有对外工具都只负责读取。",
+        "meta": "官方 API · HTTPS"
+      }
+    ],
+    "authKicker": "无需 Garmin 密码",
+    "authTitle": "Garmin Personal API Key 只在本机完成授权，不会进入聊天。",
+    "authDescription": "先在 Garmin Connect 创建 Garmin Personal API Key。完成一次授权后，CLI 会把 Key 和缓存的访问令牌保存在仅当前用户可读的本地文件中，不会采用旧版集成常见的账号密码抓取方式。",
+    "facts": [
+      [
+        "授权凭据",
+        "Personal API Key"
+      ],
+      [
+        "运行方式",
+        "完全本地"
+      ],
+      [
+        "权限边界",
+        "GET · 只读"
+      ]
+    ]
+  },
+  "quickstart": {
+    "kicker": "四步接入",
+    "title": "向 AI 客户端发送一行指令，即可接入 Garmin Personal API。",
+    "description": "复制下方指令，发送给 Codex、Claude Code、Cursor 或其他支持本地操作的 AI 客户端。客户端会自动完成环境检查、安装、配置和连接，并打开本机授权页；你只需在页面中输入 Garmin Personal API Key。",
+    "keyTitle": "准备 Garmin Personal API Key",
+    "keyDescription": "前往 Garmin Connect 专门的 Personal API Token 页面创建 Garmin Personal API Key。新 Key 只显示一次，请立即复制，但不要发到聊天里；稍后只需在本机授权页中输入。",
+    "keyLink": "打开 Personal API Token 设置 ↗",
+    "agentTitle": "把接入指令发给 AI 客户端",
+    "agentDescription": "Codex、Claude Code、Cursor 或其他具备本地操作能力的编程助手，可以识别 npm 包、读取接入说明，并按当前客户端完成配置。",
+    "commandLabel": "粘贴到 Codex、Claude Code、Cursor 或其他编程助手",
+    "contractBefore": "客户端会自动读取仓库中的 ",
+    "contractLink": "AGENTS.md ↗",
+    "contractAfter": "，无需把长篇配置复制进提示词。",
+    "localTitle": "在本机授权页粘贴 Key",
+    "localDescriptionBefore": "auth 命令会在 ",
+    "localDescriptionAfter": " 临时打开一个只在本机可访问的页面。请在那里粘贴 Key；验证成功后，凭据会以仅当前用户可读的权限保存，页面和本地监听随即关闭。",
+    "clientHandles": "自动执行流程",
+    "reloadTitle": "重启客户端，开始提问",
+    "reloadDescription": "重启一次，让客户端加载刚注册的 Garmin 工具。之后就按平常的方式提问，不必记命令，也不必知道具体工具名。",
+    "examplePrompt": "“总结我昨天的睡眠、HRV、Body Battery、压力和活动。”",
+    "docsBefore": "需要官方细节？查看 ",
+    "docsCodex": "Codex",
+    "docsClaude": "Claude Code",
+    "docsCursor": "Cursor",
+    "docsOr": "或",
+    "docsAfter": " 的 MCP 指南。"
+  },
+  "clients": {
+    "kicker": "高级设置",
+    "title": "想自己检查或配置？",
+    "description": "推荐优先使用上面的一行接入指令。下面保留各客户端的准确命令，方便开发者核对或手动配置本地进程连接。",
+    "transport": "传输方式",
+    "transportValue": "本地进程（stdio）",
+    "protocol": "连通性测试",
+    "protocolValue": "初始化 · 列出工具 · 调用工具",
+    "verified": "最近验证",
+    "verifiedValue": "2026 年 10 月 23 日",
+    "note": "无需填写服务器地址，也不需要 Docker 或托管账户。修改 MCP 配置后，请重启客户端使其生效。",
+    "tabsLabel": "选择客户端，查看 MCP 配置",
+    "source": "从源码运行",
+    "developmentOnly": "仅用于开发",
+    "windowsConfig": "Windows MCP 配置"
+  },
+  "capabilities": {
+    "kicker": "可以问什么",
+    "title": "让 Garmin 原始数据变成可以继续追问的答案。",
+    "description": "25 个工具把 Garmin Personal API 数据整理成边界清晰的上下文，同时保留原始单位并限制日期范围与样本量。",
+    "groups": [
+      {
+        "index": "01",
+        "title": "活动与 FIT",
+        "description": "搜索 Garmin 活动、查看训练步骤，或按需解码 FIT 分圈、功率、心率、步频与采样记录。",
+        "tools": [
+          "search_activities",
+          "get_activity",
+          "get_activity_recording"
+        ]
+      },
+      {
+        "index": "02",
+        "title": "每日恢复",
+        "description": "把睡眠、HRV、Body Battery、压力、每日摘要和体能年龄放在同一个恢复问题里分析。",
+        "tools": [
+          "get_day",
+          "get_sleep",
+          "get_hrv",
+          "get_body_battery"
+        ]
+      },
+      {
+        "index": "03",
+        "title": "睡眠与 HRV",
+        "description": "查看某一晚的细节，或在指定日期范围内比较睡眠与夜间 HRV 趋势。",
+        "tools": [
+          "get_sleep",
+          "get_sleep_summaries",
+          "get_hrv_summaries"
+        ]
+      },
+      {
+        "index": "04",
+        "title": "心率与脉搏血氧",
+        "description": "查询心率摘要、Garmin 中配置的心率区间、静息心率和脉搏血氧数据。",
+        "tools": [
+          "get_heart_rate",
+          "get_heart_rate_zones",
+          "get_spo2"
+        ]
+      },
+      {
+        "index": "05",
+        "title": "健康与营养",
+        "description": "查询步数、饮水、压力、体重、饮食记录、健康活动和生理周期，不会改写 Garmin 账户。",
+        "tools": [
+          "get_steps",
+          "get_hydration",
+          "get_weight",
+          "+ 另外 5 个"
+        ]
+      },
+      {
+        "index": "06",
+        "title": "个人资料与体能背景",
+        "description": "结合个人资料、心率区间和体能年龄，按你自己的情况理解 Garmin 数值。",
+        "tools": [
+          "get_profile",
+          "get_heart_rate_zones"
+        ]
+      }
+    ],
+    "tryAsking": "试着问",
+    "promptTitle": "把不同 Garmin 指标放到一起问。",
+    "prompts": [
+      [
+        "恢复",
+        "比较我最近七天的 HRV、睡眠和 Body Battery，发生了什么变化？"
+      ],
+      [
+        "训练",
+        "找到最近一次长跑，总结分圈、心率和功率漂移。"
+      ],
+      [
+        "习惯",
+        "这个月的睡眠时长、压力和活动量之间有什么关系？"
+      ]
+    ]
+  },
+  "data": {
+    "kicker": "Garmin Personal API 数据",
+    "title": "活动、恢复和健康数据，一个本地入口就够了。",
+    "description": "服务把 Garmin Personal API 的数据能力拆成 25 个职责明确的 MCP 工具，不做通用抓取，也不会把所有数据塞进一次请求。",
+    "topics": [
+      {
+        "index": "A",
+        "title": "Garmin 活动 API 与 FIT 记录",
+        "body": "按日期、运动类型或标题搜索活动，查看活动摘要与训练步骤。只有需要分圈或采样细节时，才会解码 Garmin FIT 文件；功率、配速、步频、心率、温度和 GPS 坐标都会保留原始单位。",
+        "examples": [
+          "最近一次跑步活动",
+          "分圈与功率漂移",
+          "按需读取 FIT 样本"
+        ]
+      },
+      {
+        "index": "B",
+        "title": "Garmin 睡眠、HRV 与 Body Battery",
+        "body": "既可以查看某一天的细节，也可以比较一段时间内的趋势。睡眠阶段、夜间 HRV、Body Battery 充能与消耗、压力可以放进同一个回答，但不会被包装成医学诊断。",
+        "examples": [
+          "睡眠阶段",
+          "HRV 摘要",
+          "Body Battery 趋势"
+        ]
+      },
+      {
+        "index": "C",
+        "title": "心率与每日健康摘要",
+        "body": "查询每日摘要、步数、饮水、连续心率汇总、SpO2、体重、饮食记录和健康活动。默认不返回高频原始样本，避免一个简单问题占用过多模型上下文。",
+        "examples": [
+          "静息心率",
+          "每日步数与压力",
+          "体重与饮水"
+        ]
+      },
+      {
+        "index": "D",
+        "title": "个人资料、心率区间与体能背景",
+        "body": "结合 Garmin 个人资料、已配置的心率区间、体能年龄和生理周期数据，按你自己的情况解释数值。工具只负责读取数据，不会给出诊断，也不会修改 Garmin 账户。",
+        "examples": [
+          "心率区间",
+          "体能年龄",
+          "结合个人背景的回答"
+        ]
+      }
+    ],
+    "examplesLabel": "示例"
+  },
+  "privacy": {
+    "kicker": "隐私与安全",
+    "title": "数据走到哪里，你可以看得清，也可以自己审查。",
+    "description": "本项目不托管、不转发 Garmin 数据。工具返回的结果会进入你选择的 AI 客户端和模型，后续处理遵循该服务商的隐私政策。",
+    "link": "阅读安全策略 ↗",
+    "boundaries": [
+      [
+        "凭据只存本机",
+        "Garmin Personal API Key 和缓存的访问令牌只保存在你的电脑上。"
+      ],
+      [
+        "所有工具只读",
+        "对外开放的 Garmin 操作都是 GET，不会写入训练、设备或账户。"
+      ],
+      [
+        "敏感细节默认关闭",
+        "除非你明确要求，否则不会返回高频样本或精确的 FIT 坐标。"
+      ],
+      [
+        "不收集遥测",
+        "服务没有分析埋点、崩溃上报、账户系统、数据库或远程中转。"
+      ]
+    ]
+  },
+  "faq": {
+    "kicker": "常见问题",
+    "title": "关于 Garmin Personal API，你可能想先确认这些。",
+    "description": "从 API Key、本地运行和客户端兼容性，到 FIT 活动数据、隐私与只读边界，一次说清楚。",
+    "answers": "个常见问题",
+    "items": [
+      {
+        "question": "Garmin Personal API MCP 是什么？",
+        "answer": "它是一个开源 Node.js MCP 服务，把你的 Garmin Personal API 数据整理成 25 个只读工具。兼容的 AI 客户端会直接在你的电脑上启动它；本项目不提供托管连接器。"
+      },
+      {
+        "question": "在哪里创建 Garmin Personal API Key？",
+        "answer": "前往 Garmin Connect 专门的 Personal API Token 设置页面创建 Key。新 Key 只显示一次，请立即复制，然后运行本地授权命令。CLI 会用 Key 换取访问令牌，并把两者保存在电脑上仅当前用户可读的文件中。"
+      },
+      {
+        "question": "它使用官方 Garmin Personal API 吗？",
+        "answer": "是。普通数据请求使用官方 Garmin Personal API，活动记录解析使用官方 FIT SDK；不会通过用户名和密码抓取 Garmin Connect。"
+      },
+      {
+        "question": "它能修改 Garmin 账户或把训练推送到设备吗？",
+        "answer": "不能。v0.1 只提供 Garmin Personal API GET 端点支持的读取操作，无法创建训练、更新个人资料、修改设置或向 Garmin 设备推送内容。"
+      },
+      {
+        "question": "Claude Desktop、Cursor、Codex 或 VS Code 能使用吗？",
+        "answer": "可以，只要客户端支持在电脑上启动本地 MCP 服务。本页提供 Codex、Claude Code 和 Cursor 的配置；Claude Desktop、VS Code 及其他支持本地 MCP 的客户端可以参考高级设置中的通用 npx 方式。"
+      },
+      {
+        "question": "AI 客户端能替我安装并配置它吗？",
+        "answer": "可以。把一行英文接入指令粘贴到 Codex、Claude Code 或 Cursor，客户端里的编程助手会检查环境、运行 npm 包、注册本地 MCP 服务并验证连接。auth 命令只会打开临时的 127.0.0.1 授权页，Key 由你亲自输入，不需要发进聊天。"
+      },
+      {
+        "question": "Garmin 数据会完全留在电脑上吗？",
+        "answer": "API Key、访问令牌缓存和 MCP 服务都留在本机，本项目不设远程中转。不过，工具结果会返回给你选择的 AI 客户端，并可能由其模型按照对应的隐私政策处理。"
+      },
+      {
+        "question": "AI 能查看 Garmin FIT 活动数据吗？",
+        "answer": "可以。活动记录工具能够解析分圈、活动会话，以及心率、功率、步频、配速、温度和坐标等 FIT 采样记录。高频样本和精确 GPS 坐标只有在明确开启后才会返回。"
+      },
+      {
+        "question": "支持哪些操作系统和 Node.js 版本？",
+        "answer": "支持 macOS、Windows 和 Linux，需要 Node.js 20 或更高版本。如果 Windows 客户端无法直接执行 npx，可以按照配置示例通过 cmd /c 启动。"
+      },
+      {
+        "question": "本地 Garmin MCP 启动失败怎么办？",
+        "answer": "运行 npx -y @trainingloadai/garmin-personal-api-mcp doctor。它会检查 Node.js、凭据来源、本地文件权限、Garmin 令牌交换和只读个人资料请求，全程不会启动远程服务。"
+      }
+    ]
+  },
+  "finalCta": {
+    "kicker": "一句话完成接入",
+    "titleLineOne": "复制一句话，",
+    "titleLineTwo": "让客户端完成配置。",
+    "description": "把接入指令粘贴到 Codex、Claude Code、Cursor 或其他支持本地操作的编程助手。它会读取接入说明，打开 Garmin Personal API 本机授权页，并验证最终连接。",
+    "commandLabel": "发给 AI 客户端的指令",
+    "steps": "查看四个步骤",
+    "github": "GitHub"
+  },
+  "footer": {
+    "description": "通过 Garmin Personal API，在你常用的 AI 客户端里直接查询自己的 Garmin 数据。",
+    "status": "完全本地运行 · 全部只读",
+    "start": "接入",
+    "how": "工作原理",
+    "quickstart": "快速接入",
+    "clients": "客户端配置",
+    "data": "Personal API 数据",
+    "tools": "25 个只读工具",
+    "dataGuide": "数据范围",
+    "privacy": "隐私与安全",
+    "faq": "常见问题",
+    "project": "项目",
+    "github": "GitHub",
+    "npm": "npm 包",
+    "contract": "AI 客户端接入说明",
+    "security": "安全策略",
+    "copyrightBefore": "© 2026 Trainingload.ai · 采用 ",
+    "license": "MIT License",
+    "copyrightAfter": " 开源发布。",
+    "trademark": "本项目并非 Garmin 官方产品，也未获得 Garmin 背书。Garmin 和 Garmin Connect 是 Garmin Ltd. 或其子公司的商标。",
+    "home": "Garmin Personal API MCP 首页"
+  }
+}
