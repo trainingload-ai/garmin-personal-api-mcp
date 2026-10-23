@@ -9,6 +9,7 @@ import { GarminClient } from './garmin-client.js';
 import {
   detectLocalAuthLocale,
   isSupportedLocalAuthLocale,
+  LOCAL_AUTH_LOCALES,
   openLocalAuthPage,
   resolveLocalAuthLocale,
   startLocalAuthPage,
@@ -22,11 +23,13 @@ import {
   writeApiKey,
 } from './settings.js';
 
+const AUTH_LOCALE_VALUES = LOCAL_AUTH_LOCALES.join(', ');
+
 const HELP = `Garmin Personal API MCP ${SERVER_VERSION}
 
 Usage:
   garmin-personal-api-mcp              Start the local stdio MCP server
-  garmin-personal-api-mcp auth [--locale en|zh]
+  garmin-personal-api-mcp auth [--locale en|zh|ja|es|de|fr|pt|ko]
                                      Open a localized page to validate and save an API key
   garmin-personal-api-mcp auth --terminal  Use a hidden terminal prompt instead
   garmin-personal-api-mcp auth --check Check saved credentials and Garmin connectivity
@@ -132,10 +135,10 @@ function parseAuthOptions(args: string[]): AuthOptions | { error: string } {
     if (argument === '--locale') {
       const value = args[index + 1];
       if (!value || value.startsWith('--')) {
-        return { error: 'Missing value for --locale. Supported values: en, zh.' };
+        return { error: `Missing value for --locale. Supported values: ${AUTH_LOCALE_VALUES}.` };
       }
       if (!isSupportedLocalAuthLocale(value)) {
-        return { error: `Unsupported auth locale: ${value}. Supported values: en, zh.` };
+        return { error: `Unsupported auth locale: ${value}. Supported values: ${AUTH_LOCALE_VALUES}.` };
       }
       locale = resolveLocalAuthLocale(value);
       localeWasSet = true;
@@ -145,7 +148,7 @@ function parseAuthOptions(args: string[]): AuthOptions | { error: string } {
     if (argument.startsWith('--locale=')) {
       const value = argument.slice('--locale='.length);
       if (!isSupportedLocalAuthLocale(value)) {
-        return { error: `Unsupported auth locale: ${value || '(empty)'}. Supported values: en, zh.` };
+        return { error: `Unsupported auth locale: ${value || '(empty)'}. Supported values: ${AUTH_LOCALE_VALUES}.` };
       }
       locale = resolveLocalAuthLocale(value);
       localeWasSet = true;

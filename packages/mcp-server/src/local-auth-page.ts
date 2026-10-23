@@ -3,6 +3,24 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 
 import { GarminMcpError, normalizeError } from './errors.js';
+import {
+  AUTH_COPY,
+  detectLocalAuthLocale,
+  isSupportedLocalAuthLocale,
+  LOCAL_AUTH_LOCALES,
+  LOCAL_AUTH_LOCALE_INFO,
+  localizedAuthError,
+  resolveLocalAuthLocale,
+  type LocalAuthLocale,
+} from './local-auth-i18n.js';
+
+export {
+  detectLocalAuthLocale,
+  isSupportedLocalAuthLocale,
+  LOCAL_AUTH_LOCALES,
+  resolveLocalAuthLocale,
+};
+export type { LocalAuthLocale };
 
 const LOOPBACK_HOST = '127.0.0.1';
 const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000;
@@ -11,8 +29,6 @@ const GARMIN_PERSONAL_API_TOKEN_URL =
   'https://connect.garmin.com/app/settings/personalApiToken';
 const PRODUCT_WEBSITE_URL = 'https://garminpersonalapi.com';
 const SUCCESS_FALLBACK_MS = 15 * 1000;
-
-export type LocalAuthLocale = 'en' | 'zh';
 
 type LocalAuthPageOptions = {
   locale?: LocalAuthLocale;
@@ -25,152 +41,6 @@ export type LocalAuthSession = {
   completion: Promise<void>;
   url: string;
 };
-
-type AuthCopy = {
-  browserTitle: string;
-  button: string;
-  description: string;
-  errorInvalidForm: string;
-  errorInvalidLink: string;
-  errorRequired: string;
-  errorTitle: string;
-  errorUnsupportedForm: string;
-  eyebrow: string;
-  finePrint: string;
-  formDescription: string;
-  formEyebrow: string;
-  formTitle: string;
-  heading: string;
-  inputHint: string;
-  inputLabel: string;
-  inputPlaceholder: string;
-  languageLabel: string;
-  privacyItems: readonly string[];
-  privacyTitle: string;
-  retryButton: string;
-  sourceDescription: string;
-  sourceEyebrow: string;
-  sourceLink: string;
-  sourceTitle: string;
-  successDescription: string;
-  successBrowserTitle: string;
-  successEyebrow: string;
-  successHeading: string;
-  successItems: readonly string[];
-  successNext: string;
-  successTitle: string;
-  successWebsite: string;
-};
-
-const AUTH_COPY: Record<LocalAuthLocale, AuthCopy> = {
-  en: {
-    browserTitle: 'Connect Garmin Personal API',
-    button: 'Verify key and connect',
-    description:
-      'Create a Personal API key in Garmin Connect, paste it here, and return to your AI client ready to ask about your Garmin data.',
-    errorInvalidForm: 'This authorization form is invalid or has expired.',
-    errorInvalidLink: 'This authorization link is invalid or has expired.',
-    errorRequired: 'Enter a Garmin Personal API key to continue.',
-    errorTitle: 'Verification failed',
-    errorUnsupportedForm: 'Unsupported form submission.',
-    eyebrow: 'Two-step local setup',
-    finePrint:
-      'Your key goes only to Garmin for verification, then stays in your local user configuration. It never enters an AI conversation.',
-    formDescription:
-      'We verify it directly with Garmin. After it is accepted, setup finishes automatically on this computer.',
-    formEyebrow: 'Step 2 · on this computer',
-    formTitle: 'Paste the key you just copied',
-    heading: 'Connect your Garmin data',
-    inputHint: 'Copy it from Garmin Connect’s Personal API Token page.',
-    inputLabel: 'Garmin Personal API key',
-    inputPlaceholder: 'Paste key here',
-    languageLabel: 'Authorization language',
-    privacyItems: [
-      'This page is available only on your computer',
-      'The key is verified directly by Garmin',
-      'The key is not shared with an AI client',
-    ],
-    privacyTitle: 'Your key stays local',
-    retryButton: 'Try another key',
-    sourceDescription: 'Garmin shows a new key only once. Copy it before leaving the page.',
-    sourceEyebrow: 'Step 1 · in Garmin Connect',
-    sourceLink: 'Open Personal API Token settings',
-    sourceTitle: 'Create and copy a key',
-    successDescription:
-      'Garmin accepted the key and it has been saved for this user on this computer.',
-    successBrowserTitle: 'Garmin Personal API verified',
-    successEyebrow: 'Verification complete',
-    successHeading: 'Your Garmin Personal API is ready.',
-    successItems: [
-      'Verified directly with Garmin',
-      'Saved only in your local user configuration',
-      'Ready for read-only access',
-    ],
-    successNext:
-      'The client that opened this page can now finish the local connection. You may close this tab.',
-    successTitle: 'Return to your AI client',
-    successWebsite: 'Visit project website',
-  },
-  zh: {
-    browserTitle: '连接 Garmin Personal API',
-    button: '验证密钥并连接',
-    description:
-      '只需两步：先在 Garmin Connect 创建 Personal API Key，再粘贴到这里。完成后，就可以回到 AI 客户端直接询问你的 Garmin 数据。',
-    errorInvalidForm: '此授权表单无效或已过期。',
-    errorInvalidLink: '此授权链接无效或已过期。',
-    errorRequired: '请输入 Garmin Personal API Key 后继续。',
-    errorTitle: '验证未通过',
-    errorUnsupportedForm: '无法处理此次表单提交。',
-    eyebrow: '两步完成本机接入',
-    finePrint:
-      '密钥只会发送给 Garmin 验证，随后保存在当前用户的本地配置中，不会进入任何 AI 对话。',
-    formDescription: '我们会直接向 Garmin 验证。通过后，这台电脑上的接入配置会自动完成。',
-    formEyebrow: '第 2 步 · 在这台电脑上',
-    formTitle: '粘贴刚刚复制的密钥',
-    heading: '连接你的 Garmin 数据',
-    inputHint: '从 Garmin Connect 的 Personal API Token 页面复制。',
-    inputLabel: 'Garmin Personal API Key',
-    inputPlaceholder: '在此粘贴密钥',
-    languageLabel: '授权页面语言',
-    privacyItems: ['此页面只能从你的电脑访问', '密钥由 Garmin 直接验证', '密钥不会交给 AI 客户端'],
-    privacyTitle: '密钥始终留在本机',
-    retryButton: '换一个 Key 重新验证',
-    sourceDescription: 'Garmin 只展示一次新密钥，请在离开页面前复制。',
-    sourceEyebrow: '第 1 步 · 在 Garmin Connect 中',
-    sourceLink: '打开 Personal API Token 设置',
-    sourceTitle: '创建并复制密钥',
-    successDescription:
-      'Garmin 已接受这个密钥，并将它保存在这台电脑的当前用户配置中。',
-    successBrowserTitle: 'Garmin Personal API 验证完成',
-    successEyebrow: '验证完成',
-    successHeading: 'Garmin Personal API 已准备就绪',
-    successItems: ['已由 Garmin 直接验证', '只保存在本机用户配置中', '已可用于只读查询'],
-    successNext: '刚才打开此页面的客户端会继续完成接入。你现在可以关闭此页面。',
-    successTitle: '返回你的 AI 客户端',
-    successWebsite: '返回项目官网',
-  },
-};
-
-export function resolveLocalAuthLocale(value: string | null | undefined): LocalAuthLocale {
-  return normalizeLocale(value)?.startsWith('zh') ? 'zh' : 'en';
-}
-
-export function isSupportedLocalAuthLocale(value: string | null | undefined): boolean {
-  const normalized = normalizeLocale(value);
-  return normalized === 'en' || normalized?.startsWith('en-') === true
-    || normalized === 'zh' || normalized?.startsWith('zh-') === true;
-}
-
-export function detectLocalAuthLocale(
-  environment: NodeJS.ProcessEnv = process.env,
-): LocalAuthLocale {
-  const candidate = environment.GARMIN_PERSONAL_API_LOCALE
-    ?? environment.LC_ALL
-    ?? environment.LC_MESSAGES
-    ?? environment.LANGUAGE?.split(':')[0]
-    ?? environment.LANG;
-  return resolveLocalAuthLocale(candidate);
-}
 
 export async function startLocalAuthPage(options: LocalAuthPageOptions): Promise<LocalAuthSession> {
   const state = randomBytes(32).toString('base64url');
@@ -197,7 +67,7 @@ export async function startLocalAuthPage(options: LocalAuthPageOptions): Promise
         return;
       }
       setSecurityHeaders(response, styleNonce);
-      sendText(response, 500, localizedError(defaultLocale, normalized));
+      sendText(response, 500, localizedAuthError(defaultLocale, normalized));
     });
   });
 
@@ -265,11 +135,7 @@ export async function startLocalAuthPage(options: LocalAuthPageOptions): Promise
         return;
       }
       if (submitting) {
-        sendText(
-          response,
-          409,
-          requestLocale === 'zh' ? '授权正在进行中。' : 'Authorization is already in progress.',
-        );
+        sendText(response, 409, AUTH_COPY[requestLocale].errorInProgress);
         return;
       }
 
@@ -302,7 +168,7 @@ export async function startLocalAuthPage(options: LocalAuthPageOptions): Promise
         } catch (error) {
           const normalized = normalizeError(error);
           sendHtml(response, 400, renderPage({
-            error: localizedError(locale, normalized),
+            error: localizedAuthError(locale, normalized),
             locale,
             state,
             styleNonce,
@@ -319,7 +185,7 @@ export async function startLocalAuthPage(options: LocalAuthPageOptions): Promise
       } catch (error) {
         const normalized = normalizeError(error);
         sendHtml(response, 400, renderPage({
-          error: localizedError(requestLocale, normalized),
+          error: localizedAuthError(requestLocale, normalized),
           locale: requestLocale,
           state,
           styleNonce,
@@ -328,7 +194,7 @@ export async function startLocalAuthPage(options: LocalAuthPageOptions): Promise
       return;
     }
 
-    sendText(response, 404, requestLocale === 'zh' ? '未找到页面' : 'Not found');
+    sendText(response, 404, AUTH_COPY[requestLocale].notFound);
   }
 
   server.on('clientError', (_error, socket) => {
@@ -405,31 +271,6 @@ function browserCommand(url: string): [string, string[]] {
   return ['xdg-open', [url]];
 }
 
-function normalizeLocale(value: string | null | undefined): string | undefined {
-  return value?.trim().toLowerCase().replaceAll('_', '-').split('.')[0];
-}
-
-function localizedError(locale: LocalAuthLocale, error: GarminMcpError): string {
-  if (locale === 'en') return error.message;
-  switch (error.code) {
-    case 'credentials_missing':
-      return '无法在这台电脑上读取或保存密钥。请检查本地配置目录的读写权限后重试。';
-    case 'credentials_invalid_or_expired':
-    case 'garmin_unauthorized':
-      return 'Garmin 拒绝了这个 Personal API Key。它可能无效、已过期或已被删除，请创建当前有效的密钥后重试。';
-    case 'garmin_rate_limited':
-      return error.retryAfterSeconds === undefined
-        ? 'Garmin 暂时限制了请求频率，请稍后再试。'
-        : `Garmin 暂时限制了请求频率，请在 ${error.retryAfterSeconds} 秒后重试。`;
-    case 'network_error':
-      return '无法连接 Garmin Personal API。请检查网络后重试。';
-    case 'invalid_input':
-      return '提交的内容无效，请检查后重试。';
-    default:
-      return 'Garmin Personal API 暂时无法完成验证，请稍后再试。';
-  }
-}
-
 function setSecurityHeaders(response: ServerResponse, styleNonce: string): void {
   response.setHeader('Cache-Control', 'no-store, max-age=0');
   response.setHeader(
@@ -493,9 +334,13 @@ function renderPage(options: {
   success?: boolean;
 }): string {
   const copy = AUTH_COPY[options.locale];
-  const htmlLanguage = options.locale === 'zh' ? 'zh-CN' : 'en';
-  const enUrl = escapeHtml(authorizationPath(options.state, 'en'));
-  const zhUrl = escapeHtml(authorizationPath(options.state, 'zh'));
+  const localeInfo = LOCAL_AUTH_LOCALE_INFO[options.locale];
+  const currentAuthorizationUrl = escapeHtml(authorizationPath(options.state, options.locale));
+  const languageOptions = LOCAL_AUTH_LOCALES.map((locale) => {
+    const info = LOCAL_AUTH_LOCALE_INFO[locale];
+    const url = escapeHtml(authorizationPath(options.state, locale));
+    return `<a href="${url}" lang="${info.htmlLanguage}" hreflang="${info.htmlLanguage}"${locale === options.locale ? ' aria-current="page"' : ''}><span>${info.label}</span><span class="language-menu__check" aria-hidden="true">${locale === options.locale ? '✓' : ''}</span></a>`;
+  }).join('');
   const productWebsiteUrl = options.locale === 'zh'
     ? `${PRODUCT_WEBSITE_URL}/zh`
     : PRODUCT_WEBSITE_URL;
@@ -515,7 +360,7 @@ function renderPage(options: {
       </form>`;
 
   return `<!doctype html>
-<html lang="${htmlLanguage}">
+<html lang="${localeInfo.htmlLanguage}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -531,18 +376,27 @@ function renderPage(options: {
     body { min-height:100dvh; display:grid; place-items:center; margin:0; padding:32px; overflow-x:hidden; background-color:var(--bg); background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px); background-size:56px 56px; color:var(--text); font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
     body::before { content:""; position:fixed; inset:0; pointer-events:none; background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 38%); }
     a { color:inherit; }
-    .shell { position:relative; width:min(100%,920px); border:1px solid var(--line); border-radius:8px; background:color-mix(in srgb,var(--surface) 97%,transparent); }
+    .shell { position:relative; width:min(100%,920px); max-width:100%; border:1px solid var(--line); border-radius:8px; background:color-mix(in srgb,var(--surface) 97%,transparent); }
     .topbar { min-height:66px; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 20px; border-bottom:1px solid var(--line); }
     .brand { display:flex; align-items:center; gap:11px; min-width:0; text-decoration:none; font-size:13px; font-weight:750; letter-spacing:-.01em; }
     .mark { width:34px; height:34px; display:block; flex:0 0 auto; border-radius:5px; }
-    .language { display:flex; align-items:center; gap:5px; padding:3px; border:1px solid var(--line); border-radius:5px; background:var(--surface-2); }
-    .language a { min-width:34px; height:26px; display:grid; place-items:center; border-radius:3px; color:var(--muted); text-decoration:none; font:700 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
-    .language a:hover { color:var(--text); }
-    .language a[aria-current="page"] { background:var(--surface); color:var(--text); box-shadow:inset 0 0 0 1px var(--line); }
+    .language-menu { position:relative; }
+    .language-menu summary { min-width:72px; height:34px; display:flex; align-items:center; justify-content:space-between; gap:9px; padding:0 10px; border:1px solid var(--line); border-radius:5px; background:var(--surface-2); color:var(--text); cursor:pointer; list-style:none; font:750 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .language-menu summary::-webkit-details-marker { display:none; }
+    .language-menu summary:hover { border-color:color-mix(in srgb,var(--accent) 45%,var(--line)); }
+    .language-menu summary:focus-visible { outline:3px solid color-mix(in srgb,var(--accent) 35%,transparent); outline-offset:3px; }
+    .language-menu__globe { color:var(--accent-strong); font-size:14px; }
+    .language-menu__chevron { color:var(--muted); transition:transform .15s ease; }
+    .language-menu[open] .language-menu__chevron { transform:rotate(180deg); }
+    .language-menu__panel { position:absolute; z-index:10; top:calc(100% + 8px); right:0; width:210px; display:grid; grid-template-columns:1fr 1fr; gap:3px; padding:6px; border:1px solid var(--line); border-radius:6px; background:var(--surface); box-shadow:0 18px 40px rgba(0,0,0,.16); }
+    .language-menu__panel a { min-height:38px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 10px; border-radius:4px; color:var(--muted); text-decoration:none; font-size:12px; }
+    .language-menu__panel a:hover { background:var(--surface-2); color:var(--text); }
+    .language-menu__panel a[aria-current="page"] { color:var(--text); font-weight:750; }
+    .language-menu__check { color:var(--accent-strong); font-weight:800; }
     .top-status { display:flex; align-items:center; gap:8px; color:var(--accent-strong); font:750 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.09em; text-transform:uppercase; }
     .top-status::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 13%,transparent); }
-    .content { display:grid; grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr); min-height:510px; }
-    .intro,.authorization { padding:48px; }
+    .content { min-width:0; display:grid; grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr); min-height:510px; }
+    .intro,.authorization { min-width:0; padding:48px; }
     .intro { display:flex; flex-direction:column; border-right:1px solid var(--line); }
     .authorization { display:flex; flex-direction:column; justify-content:center; background:color-mix(in srgb,var(--surface-2) 48%,transparent); }
     .eyebrow { margin:0; color:var(--accent-strong); font:750 10px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; text-transform:uppercase; }
@@ -616,12 +470,14 @@ function renderPage(options: {
     @media (max-width:430px) {
       body { padding:10px; }
       .topbar { min-height:58px; padding:11px 13px; }
-      .brand span { max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .brand span { max-width:172px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .language-menu__panel { position:fixed; top:72px; right:10px; left:10px; width:auto; }
       .intro,.authorization { padding:28px 20px; }
       .completion { padding:36px 20px; }
       .completion__signal { margin-bottom:30px; }
       .completion__line { width:36px; }
-      h1 { font-size:38px; }
+      h1 { font-size:36px; overflow-wrap:anywhere; }
+      .authorization h2,.source__title,.lede,.authorization__description { overflow-wrap:anywhere; }
       .source { grid-template-columns:28px 1fr 22px; }
     }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
@@ -630,14 +486,14 @@ function renderPage(options: {
 <body>
   <div class="shell${options.success ? ' shell--complete' : ''}">
     <header class="topbar">
-      <a class="brand" href="${options.success ? productWebsiteUrl : options.locale === 'zh' ? zhUrl : enUrl}" aria-label="Garmin Personal API MCP">
+      <a class="brand" href="${options.success ? productWebsiteUrl : currentAuthorizationUrl}" aria-label="Garmin Personal API MCP">
         ${BRAND_ICON_SVG.replace('<svg ', '<svg class="mark" ')}
         <span>Garmin Personal API MCP</span>
       </a>
-      ${options.success ? `<span class="top-status">${copy.successEyebrow}</span>` : `<nav class="language" aria-label="${copy.languageLabel}">
-        <a href="${enUrl}"${options.locale === 'en' ? ' aria-current="page"' : ''}>EN</a>
-        <a href="${zhUrl}"${options.locale === 'zh' ? ' aria-current="page"' : ''}>中</a>
-      </nav>`}
+      ${options.success ? `<span class="top-status">${copy.successEyebrow}</span>` : `<details class="language-menu">
+        <summary aria-label="${escapeHtml(copy.languageLabel)}"><span class="language-menu__globe" aria-hidden="true">◎</span><span>${localeInfo.shortLabel}</span><span class="language-menu__chevron" aria-hidden="true">⌄</span></summary>
+        <nav class="language-menu__panel" aria-label="${escapeHtml(copy.languageLabel)}">${languageOptions}</nav>
+      </details>`}
     </header>
     ${options.success ? `<main class="completion" aria-labelledby="page-title" role="status">
       <div class="completion__signal" aria-hidden="true">

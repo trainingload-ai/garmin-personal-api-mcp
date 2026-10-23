@@ -14,7 +14,13 @@ this package, complete the setup for the AI client in which you are running:
 2. Match the authorization page to the language of the current conversation, then run one of:
 
    - English or any unsupported language: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale en`
-   - Chinese: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale zh`
+   - Simplified Chinese: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale zh`
+   - Japanese: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale ja`
+   - Spanish: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale es`
+   - German: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale de`
+   - French: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale fr`
+   - Portuguese: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale pt`
+   - Korean: `npx -y @trainingloadai/garmin-personal-api-mcp auth --locale ko`
 
 3. The command opens a temporary page on `127.0.0.1`. The page links to the exact Garmin Connect
    [Personal API Token settings](https://connect.garmin.com/app/settings/personalApiToken). Tell the

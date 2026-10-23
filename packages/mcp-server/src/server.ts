@@ -4,7 +4,7 @@ import { GarminClient, type GarminGateway } from './garmin-client.js';
 import { registerGarminTools } from './tools/index.js';
 
 export const SERVER_NAME = 'garmin-personal-api-mcp';
-export const SERVER_VERSION = '0.1.2';
+export const SERVER_VERSION = '0.1.3';
 
 export function createServer(gateway: GarminGateway = new GarminClient()): McpServer {
   const server = new McpServer(

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented here.
 
+## 0.1.3 - 2026-10-23
+
+- Localize the temporary browser authorization flow in English, Simplified Chinese, Japanese,
+  Spanish, German, French, Portuguese, and Korean.
+- Add an accessible language menu and improve the authorization layout on narrow screens.
+- Localize verification, retry, rate-limit, and completion states while keeping API keys confined
+  to the loopback authorization flow.
+
 ## 0.1.2 - 2026-10-23
 
 - Fix browser authorization forms being rejected when Chrome serializes a privacy-restricted form origin as `null`.

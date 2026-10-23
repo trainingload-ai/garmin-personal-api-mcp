@@ -21,11 +21,15 @@ describe('local authorization page', () => {
       expect(response.headers.get('content-security-policy')).toContain("default-src 'none'");
       expect(response.headers.get('referrer-policy')).toBe('same-origin');
       expect(response.headers.get('x-frame-options')).toBe('DENY');
-      expect(html).toContain('Garmin Personal API key');
+      expect(html).toContain('Personal API key');
       expect(html).toContain('type="password"');
       expect(html).toMatch(/action="\/authorize\?lang=en&amp;state=[^"]+"/);
       expect(html).toContain('https://connect.garmin.com/app/settings/personalApiToken');
       expect(html).toContain('<html lang="en">');
+      expect(html).toContain('Choose authorization language');
+      expect(html).toContain('lang=ja&amp;state=');
+      expect(html).toContain('日本語');
+      expect(html).toContain('한국어');
     } finally {
       const rejected = expect(session.completion).rejects.toThrow('cancelled');
       await session.close();
@@ -68,7 +72,7 @@ describe('local authorization page', () => {
     expect(response.redirected).toBe(true);
     expect(new URL(response.url).pathname).toBe('/complete');
     expect(onSubmit).toHaveBeenCalledWith(apiKey);
-    expect(html).toContain('Return to your AI client');
+    expect(html).toContain('Continue in your AI client');
     expect(html).toContain('Visit project website');
     expect(html).toContain('href="https://garminpersonalapi.com"');
     expect(html).not.toContain(apiKey);
@@ -96,9 +100,9 @@ describe('local authorization page', () => {
     expect(first.status).toBe(400);
     expect(first.url).toContain('lang=en');
     const errorPage = await first.text();
-    expect(errorPage).toContain('Verification failed');
-    expect(errorPage).toContain('Garmin rejected this key.');
-    expect(errorPage).toContain('Try another key');
+    expect(errorPage).toContain('Key not verified');
+    expect(errorPage).toContain('Garmin did not accept this Personal API key.');
+    expect(errorPage).toContain('Verify another key');
 
     const second = await submit('valid-key');
     expect(second.status).toBe(200);
@@ -167,7 +171,7 @@ describe('local authorization page', () => {
     expect(response.status).toBe(200);
     expect(response.redirected).toBe(true);
     expect(new URL(response.url).pathname).toBe('/complete');
-    expect(success).toContain('Garmin Personal API 已准备就绪');
+    expect(success).toContain('Garmin Personal API 已连接');
     expect(success).toContain('返回项目官网');
     expect(success).toContain('href="https://garminpersonalapi.com/zh"');
     expect(success).not.toContain('private-garmin-key');
@@ -197,9 +201,44 @@ describe('local authorization page', () => {
   it('normalizes supported browser and system locales', () => {
     expect(resolveLocalAuthLocale('zh-CN')).toBe('zh');
     expect(resolveLocalAuthLocale('en_US')).toBe('en');
+    expect(resolveLocalAuthLocale('ja_JP')).toBe('ja');
+    expect(resolveLocalAuthLocale('es-MX')).toBe('es');
+    expect(resolveLocalAuthLocale('de_DE.UTF-8')).toBe('de');
+    expect(resolveLocalAuthLocale('fr_CA')).toBe('fr');
+    expect(resolveLocalAuthLocale('pt-BR')).toBe('pt');
+    expect(resolveLocalAuthLocale('ko_KR')).toBe('ko');
     expect(isSupportedLocalAuthLocale('zh-Hans')).toBe(true);
-    expect(isSupportedLocalAuthLocale('fr')).toBe(false);
+    expect(isSupportedLocalAuthLocale('fr')).toBe(true);
+    expect(isSupportedLocalAuthLocale('it')).toBe(false);
     expect(detectLocalAuthLocale({ LANG: 'zh_CN.UTF-8' })).toBe('zh');
     expect(detectLocalAuthLocale({ LANG: 'en_US.UTF-8' })).toBe('en');
+    expect(detectLocalAuthLocale({ LANGUAGE: 'pt_BR:en_US' })).toBe('pt');
+  });
+
+  it.each([
+    ['en', 'en', 'Connect Garmin Personal API'],
+    ['zh', 'zh-CN', '连接 Garmin Personal API'],
+    ['ja', 'ja', 'Garmin Personal API に接続'],
+    ['es', 'es', 'Conecta Garmin Personal API'],
+    ['de', 'de', 'Garmin Personal API verbinden'],
+    ['fr', 'fr', 'Connectez Garmin Personal API'],
+    ['pt', 'pt', 'Conecte a Garmin Personal API'],
+    ['ko', 'ko', 'Garmin Personal API 연결'],
+  ] as const)('renders the complete %s authorization page', async (locale, htmlLanguage, heading) => {
+    const session = await startLocalAuthPage({ locale, onSubmit: vi.fn() });
+    try {
+      const response = await fetch(session.url);
+      const html = await response.text();
+
+      expect(response.status).toBe(200);
+      expect(new URL(session.url).searchParams.get('lang')).toBe(locale);
+      expect(html).toContain(`<html lang="${htmlLanguage}">`);
+      expect(html).toContain(heading);
+      expect(html).toContain(`name="lang" value="${locale}"`);
+    } finally {
+      const rejected = expect(session.completion).rejects.toThrow('cancelled');
+      await session.close();
+      await rejected;
+    }
   });
 });

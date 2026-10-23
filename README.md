@@ -34,8 +34,9 @@ If you prefer to configure the client yourself, open the local authorization pag
    npx -y @trainingloadai/garmin-personal-api-mcp auth
    ```
 
-Pass `--locale zh` for Chinese or `--locale en` for English. Without an explicit locale, the CLI
-uses the current system locale when it opens the page.
+Use `--locale en|zh|ja|es|de|fr|pt|ko` to choose the authorization-page language. Without an
+explicit locale, the CLI uses the current system locale when it opens the page and falls back to
+English for unsupported languages.
 
 For headless systems, use `npx -y @trainingloadai/garmin-personal-api-mcp auth --terminal` instead.
 
@@ -60,7 +61,7 @@ The exact configuration filename and reload step belong to the MCP host. This pa
 
 ```text
 garmin-personal-api-mcp              Start the stdio MCP server
-garmin-personal-api-mcp auth [--locale en|zh]
+garmin-personal-api-mcp auth [--locale en|zh|ja|es|de|fr|pt|ko]
                                      Open a localized page, validate, and save the API key
 garmin-personal-api-mcp auth --terminal
                                      Use a hidden terminal prompt instead
