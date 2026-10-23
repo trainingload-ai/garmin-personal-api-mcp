@@ -20,7 +20,7 @@ jobs:
           version: 10.33.2
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: 22
           registry-url: https://registry.npmjs.org
       - name: Install npm with trusted-publishing support
         run: npm install --global npm@11.21.0

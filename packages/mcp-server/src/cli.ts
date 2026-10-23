@@ -174,7 +174,7 @@ async function runDoctor(): Promise<number> {
   const major = Number(process.versions.node.split('.')[0]);
   checks.push({
     name: 'Node.js',
-    status: major >= 20 ? 'ok' : 'error',
+    status: major >= 22 ? 'ok' : 'error',
     detail: `${process.version} (requires 20 or newer)`,
   });
 

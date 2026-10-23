@@ -10,11 +10,7 @@ import { alternateLanguages, canonicalUrl } from './url';
 export function createLocalizedMetadata(locale: Locale): Metadata {
   const copy = getMessagesForLocale(locale);
   const canonical = canonicalUrl(locale);
-  const imageUrl = createOpenGraphImageUrl({
-    description: copy.metadata.description,
-    locale,
-    title: copy.metadata.title,
-  });
+  const imageUrl = createOpenGraphImageUrl(locale);
   const image = {
     url: imageUrl,
     width: 1200,

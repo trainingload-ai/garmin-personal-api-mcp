@@ -4,25 +4,31 @@
   "private": true,
   "packageManager": "pnpm@10.33.2",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "build": "pnpm -r build",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "deploy:docs": "pnpm --filter docs build && pnpm verify:docs && wrangler deploy",
     "dev:docs": "pnpm --filter docs dev",
     "dev:mcp": "pnpm --filter @trainingloadai/garmin-personal-api-mcp dev",
     "lint": "pnpm --filter docs exec next typegen && eslint .",
     "pack:mcp": "pnpm --filter @trainingloadai/garmin-personal-api-mcp pack",
+    "prepare": "husky",
     "smoke:pack": "node scripts/smoke-packed.mjs",
     "test": "pnpm -r --if-present test",
     "test:coverage": "pnpm -r --if-present test:coverage",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "verify:docs": "node scripts/verify-static-docs.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^24.10.0",
     "eslint": "^9.39.2",
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.0"
+    "typescript-eslint": "^8.72.0",
+    "wrangler": "4.152.0"
   }
 }

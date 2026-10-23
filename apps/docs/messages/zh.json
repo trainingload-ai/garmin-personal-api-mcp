@@ -393,7 +393,7 @@
       },
       {
         "question": "支持哪些操作系统和 Node.js 版本？",
-        "answer": "支持 macOS、Windows 和 Linux，需要 Node.js 20 或更高版本。如果 Windows 客户端无法直接执行 npx，可以按照配置示例通过 cmd /c 启动。"
+        "answer": "支持 macOS、Windows 和 Linux，需要 Node.js 22 或更高版本。如果 Windows 客户端无法直接执行 npx，可以按照配置示例通过 cmd /c 启动。"
       },
       {
         "question": "本地 Garmin MCP 启动失败怎么办？",

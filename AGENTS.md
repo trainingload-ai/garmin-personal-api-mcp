@@ -9,7 +9,7 @@ integration local and read-only.
 When a user says `Connect @trainingloadai/garmin-personal-api-mcp`, or otherwise asks you to connect
 this package, complete the setup for the AI client in which you are running:
 
-1. Check that Node.js 20 or newer and `npx` are available. Do not install or upgrade system
+1. Check that Node.js 22 or newer and `npx` are available. Do not install or upgrade system
    software without the user’s approval.
 2. Match the authorization page to the language of the current conversation, then run one of:
 

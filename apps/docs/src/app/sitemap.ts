@@ -3,6 +3,8 @@ import type { MetadataRoute } from 'next';
 import { alternateLanguages } from '../lib/seo/url';
 import { site } from '../lib/site';
 
+export const dynamic = 'force-static';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const languages = alternateLanguages();
 

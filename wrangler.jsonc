@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "garmin-personal-api-mcp",
+  "compatibility_date": "2026-10-23",
+  "assets": {
+    "directory": "./apps/docs/out",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

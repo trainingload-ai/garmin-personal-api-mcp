@@ -393,7 +393,7 @@
       },
       {
         "question": "Which operating systems and Node.js versions are supported?",
-        "answer": "Node.js 20 or newer is required on macOS, Windows, or Linux. Windows hosts that cannot execute npx directly can launch it through cmd /c, as shown in the configuration tabs."
+        "answer": "Node.js 22 or newer is required on macOS, Windows, or Linux. Windows hosts that cannot execute npx directly can launch it through cmd /c, as shown in the configuration tabs."
       },
       {
         "question": "Why did the local Garmin MCP server fail to start?",

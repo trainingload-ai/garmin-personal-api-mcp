@@ -6,7 +6,7 @@ Garmin Personal API MCP is a local-only, read-only, open-source MCP server that 
 
 ## Quickstart
 
-Requires Node.js 20 or newer (Node.js 22 LTS recommended).
+Requires Node.js 22 or newer.
 
 1. Create a Personal API key on Garmin Connect's dedicated
    [Personal API Token settings page](https://connect.garmin.com/app/settings/personalApiToken).

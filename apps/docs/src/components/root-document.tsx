@@ -11,7 +11,7 @@ export function RootDocument({ children, locale }: { children: ReactNode; locale
     <html className={inter.variable} lang={locale === 'zh' ? 'zh-CN' : 'en'} suppressHydrationWarning>
       <body>
         <RootProvider theme={{ defaultTheme: 'system', disableTransitionOnChange: true, enableSystem: true }}>
-          <NextIntlClientProvider messages={null}>
+          <NextIntlClientProvider locale={locale} messages={null}>
             <TooltipProvider>{children}</TooltipProvider>
           </NextIntlClientProvider>
         </RootProvider>

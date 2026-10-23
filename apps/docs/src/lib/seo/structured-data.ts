@@ -25,7 +25,7 @@ export function structuredDataForLocale(locale: Locale) {
       description: copy.metadata.description,
       codeRepository: site.github,
       programmingLanguage: 'TypeScript',
-      runtimePlatform: 'Node.js 20+',
+      runtimePlatform: 'Node.js 22+',
       license: `${site.github}/blob/main/LICENSE`,
       version: site.version,
       url,
@@ -50,7 +50,7 @@ export function structuredDataForLocale(locale: Locale) {
       name: copy.quickstart.title,
       description: copy.quickstart.description,
       totalTime: 'PT10M',
-      tool: [{ '@type': 'HowToTool', name: 'Node.js 20+' }],
+      tool: [{ '@type': 'HowToTool', name: 'Node.js 22+' }],
       step: [
         { '@type': 'HowToStep', position: 1, name: copy.quickstart.keyTitle, text: copy.quickstart.keyDescription },
         { '@type': 'HowToStep', position: 2, name: copy.quickstart.agentTitle, text: copy.quickstart.agentDescription },

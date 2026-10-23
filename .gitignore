@@ -2,7 +2,9 @@ node_modules/
 dist/
 coverage/
 .next/
+out/
 .source/
+.wrangler/
 *.tgz
 *.tsbuildinfo
 .DS_Store

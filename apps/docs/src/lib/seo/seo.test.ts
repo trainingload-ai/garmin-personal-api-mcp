@@ -32,11 +32,7 @@ describe('localized metadata', () => {
   it.each(['en', 'zh'] as const)('includes canonical, hreflang, Open Graph, Twitter, and robots for %s', (locale) => {
     const metadata = createLocalizedMetadata(locale);
     const copy = getMessagesForLocale(locale);
-    const imageUrl = createOpenGraphImageUrl({
-      description: copy.metadata.description,
-      locale,
-      title: copy.metadata.title,
-    });
+    const imageUrl = createOpenGraphImageUrl(locale);
 
     expect(metadata.alternates).toEqual({
       canonical: canonicalUrl(locale),
@@ -54,18 +50,9 @@ describe('localized metadata', () => {
     });
   });
 
-  it('encodes localized title and description in the Open Graph image URL', () => {
-    const copy = getMessagesForLocale('zh');
-    const imageUrl = new URL(createOpenGraphImageUrl({
-      description: copy.metadata.description,
-      locale: 'zh',
-      title: copy.metadata.title,
-    }));
-
-    expect(imageUrl.pathname).toBe('/opengraph-image');
-    expect(imageUrl.searchParams.get('locale')).toBe('zh');
-    expect(imageUrl.searchParams.get('title')).toBe(copy.metadata.title);
-    expect(imageUrl.searchParams.get('description')).toBe(copy.metadata.description);
+  it('uses a pre-rendered Open Graph image for each locale', () => {
+    expect(createOpenGraphImageUrl('en')).toBe('https://garminpersonalapi.com/og/en.png');
+    expect(createOpenGraphImageUrl('zh')).toBe('https://garminpersonalapi.com/og/zh.png');
   });
 });
 

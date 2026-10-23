@@ -18,7 +18,7 @@ The agent should run the local auth command, ask you to enter the API key only o
 
 ## Manual setup
 
-Requires Node.js 20 or newer.
+Requires Node.js 22 or newer.
 
 ```bash
 npx -y @trainingloadai/garmin-personal-api-mcp auth
