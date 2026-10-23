@@ -3,6 +3,9 @@
 Local-only, read-only MCP access to your own Garmin activities, sleep, HRV, Body Battery, heart
 rate, and wellness data through Garmin’s official Personal API.
 
+Documentation: [English](https://github.com/trainingload-ai/garmin-personal-api-mcp#readme) ·
+[简体中文](https://github.com/trainingload-ai/garmin-personal-api-mcp/blob/main/README.zh-CN.md)
+
 Website: [garminpersonalapi.com](https://garminpersonalapi.com/) · Chinese:
 [garminpersonalapi.com/zh](https://garminpersonalapi.com/zh) · AI-readable project context:
 [llms.txt](https://garminpersonalapi.com/llms.txt) and

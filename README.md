@@ -1,5 +1,7 @@
 # Garmin Personal API MCP
 
+[English](README.md) · [简体中文](README.zh-CN.md)
+
 Garmin Personal API MCP is a local-only, read-only, open-source MCP server that connects your own Garmin data to compatible AI clients. It uses Garmin's official Personal API, runs over stdio on your computer, and does not require your Garmin username or password.
 
 > Not affiliated with or endorsed by Garmin. Garmin and Garmin Connect are trademarks of Garmin Ltd. or its subsidiaries.

@@ -47,6 +47,18 @@ if (installedPackage.version !== expectedVersion) {
   throw new Error(`Unexpected installed version: ${installedPackage.version}`);
 }
 
+const installedPackageDirectory = path.join(
+  consumerDirectory,
+  'node_modules',
+  '@trainingloadai',
+  'garmin-personal-api-mcp',
+);
+const distFiles = await readdir(path.join(installedPackageDirectory, 'dist'), { recursive: true });
+const sourceMaps = distFiles.filter((name) => name.endsWith('.map'));
+if (sourceMaps.length > 0) {
+  throw new Error(`Packed package contains source maps: ${sourceMaps.join(', ')}`);
+}
+
 const executable = path.join(
   consumerDirectory,
   'node_modules',

@@ -38,7 +38,7 @@
     "fitness"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "node -e \"require('node:fs').rmSync('dist', { force: true, recursive: true })\" && tsc -p tsconfig.build.json",
     "dev": "tsx src/index.ts",
     "prepack": "pnpm build",
     "test": "vitest run",
