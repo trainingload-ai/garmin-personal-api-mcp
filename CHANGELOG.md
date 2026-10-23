@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented here.
 
+## 0.1.4 - 2026-10-24
+
+- Add a complete Simplified Chinese README and link it from the repository and npm documentation.
+- Stop publishing JavaScript and declaration source maps.
+- Clean the build output before compilation and fail the packed-package smoke test if any source map
+  is included.
+
 ## 0.1.3 - 2026-10-23
 
 - Localize the temporary browser authorization flow in English, Simplified Chinese, Japanese,

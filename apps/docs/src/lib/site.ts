@@ -4,7 +4,7 @@ export const site = {
   name: 'Garmin Personal API MCP',
   shortName: 'Garmin Personal API MCP',
   publisher: 'Trainingload.ai',
-  version: '0.1.3',
+  version: '0.1.4',
   origin: 'https://garminpersonalapi.com',
   description:
     'A local, read-only, open-source Garmin MCP server for activities, sleep, HRV, Body Battery, heart rate, and wellness data through the official Garmin Personal API.',
