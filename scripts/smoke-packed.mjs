@@ -7,6 +7,8 @@ import readline from 'node:readline';
 
 const workspace = path.resolve(import.meta.dirname, '..');
 const packageDirectory = path.join(workspace, 'packages', 'mcp-server');
+const expectedPackage = JSON.parse(await readFile(path.join(packageDirectory, 'package.json'), 'utf8'));
+const expectedVersion = expectedPackage.version;
 const temporary = await mkdtemp(path.join(tmpdir(), 'garmin-mcp-pack-'));
 const packedDirectory = path.join(temporary, 'packed');
 const consumerDirectory = path.join(temporary, 'consumer');
@@ -41,7 +43,7 @@ const installedPackage = JSON.parse(
     'utf8',
   ),
 );
-if (installedPackage.version !== '0.1.0') {
+if (installedPackage.version !== expectedVersion) {
   throw new Error(`Unexpected installed version: ${installedPackage.version}`);
 }
 
@@ -52,7 +54,7 @@ const executable = path.join(
   process.platform === 'win32' ? 'garmin-personal-api-mcp.cmd' : 'garmin-personal-api-mcp',
 );
 const version = spawnSync(executable, ['--version'], { cwd: consumerDirectory, encoding: 'utf8' });
-if (version.status !== 0 || version.stdout.trim() !== '0.1.0') {
+if (version.status !== 0 || version.stdout.trim() !== expectedVersion) {
   throw new Error(`Packed CLI version check failed: ${version.stderr || version.stdout}`);
 }
 

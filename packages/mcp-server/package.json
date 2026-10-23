@@ -1,6 +1,6 @@
 {
   "name": "@trainingloadai/garmin-personal-api-mcp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Local-only, read-only MCP server for your own Garmin Personal API data",
   "type": "module",
   "bin": {

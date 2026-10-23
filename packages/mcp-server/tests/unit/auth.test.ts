@@ -45,6 +45,19 @@ describe('TokenProvider', () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
+  it('bypasses a compatible cached token when a fresh key validation is requested', async () => {
+    const runtime = await settings();
+    const fetch = vi
+      .fn<typeof globalThis.fetch>()
+      .mockResolvedValueOnce(new Response(jwt(10_000), { status: 200 }))
+      .mockResolvedValueOnce(new Response(jwt(11_000), { status: 200 }));
+    const provider = new TokenProvider({ apiKey: 'key-one', fetch, now: () => 1_000, settings: runtime });
+
+    expect((await provider.getToken()).expiresAt).toBe(10_000);
+    expect((await provider.getToken({ forceRefresh: true })).expiresAt).toBe(11_000);
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
   it('does not reuse a token for a different API key', async () => {
     const runtime = await settings();
     const fetch = vi

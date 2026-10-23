@@ -19,9 +19,11 @@ describe('local authorization page', () => {
       expect(response.status).toBe(200);
       expect(response.headers.get('cache-control')).toContain('no-store');
       expect(response.headers.get('content-security-policy')).toContain("default-src 'none'");
+      expect(response.headers.get('referrer-policy')).toBe('same-origin');
       expect(response.headers.get('x-frame-options')).toBe('DENY');
       expect(html).toContain('Garmin Personal API key');
       expect(html).toContain('type="password"');
+      expect(html).toMatch(/action="\/authorize\?lang=en&amp;state=[^"]+"/);
       expect(html).toContain('https://connect.garmin.com/app/settings/personalApiToken');
       expect(html).toContain('<html lang="en">');
     } finally {
@@ -63,8 +65,12 @@ describe('local authorization page', () => {
 
     await session.completion;
     expect(response.status).toBe(200);
+    expect(response.redirected).toBe(true);
+    expect(new URL(response.url).pathname).toBe('/complete');
     expect(onSubmit).toHaveBeenCalledWith(apiKey);
     expect(html).toContain('Return to your AI client');
+    expect(html).toContain('Visit project website');
+    expect(html).toContain('href="https://garminpersonalapi.com"');
     expect(html).not.toContain(apiKey);
   });
 
@@ -77,23 +83,53 @@ describe('local authorization page', () => {
       .mockResolvedValueOnce();
     const session = await startLocalAuthPage({ locale: 'en', onSubmit });
     const url = new URL(session.url);
-    const submit = (apiKey: string) => fetch(new URL('/authorize', url), {
+    const submit = (apiKey: string) => fetch(url, {
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        origin: url.origin,
+        origin: 'null',
       },
       body: new URLSearchParams({ apiKey, state: url.searchParams.get('state') ?? '' }),
     });
 
     const first = await submit('wrong-key');
     expect(first.status).toBe(400);
-    expect(await first.text()).toContain('Garmin rejected this key.');
+    expect(first.url).toContain('lang=en');
+    const errorPage = await first.text();
+    expect(errorPage).toContain('Verification failed');
+    expect(errorPage).toContain('Garmin rejected this key.');
+    expect(errorPage).toContain('Try another key');
 
     const second = await submit('valid-key');
     expect(second.status).toBe(200);
     await session.completion;
     expect(onSubmit).toHaveBeenCalledTimes(2);
+  });
+
+  it('rejects a form submitted from a different non-opaque origin', async () => {
+    const onSubmit = vi.fn<(key: string) => Promise<void>>().mockResolvedValue();
+    const session = await startLocalAuthPage({ locale: 'en', onSubmit });
+    try {
+      const url = new URL(session.url);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'https://attacker.example',
+        },
+        body: new URLSearchParams({
+          apiKey: 'private-garmin-key',
+          state: url.searchParams.get('state') ?? '',
+        }),
+      });
+
+      expect(response.status).toBe(403);
+      expect(onSubmit).not.toHaveBeenCalled();
+    } finally {
+      const rejected = expect(session.completion).rejects.toThrow('cancelled');
+      await session.close();
+      await rejected;
+    }
   });
 
   it('expires an abandoned authorization session', async () => {
@@ -129,8 +165,33 @@ describe('local authorization page', () => {
 
     await session.completion;
     expect(response.status).toBe(200);
-    expect(success).toContain('Garmin 已连接');
+    expect(response.redirected).toBe(true);
+    expect(new URL(response.url).pathname).toBe('/complete');
+    expect(success).toContain('Garmin Personal API 已准备就绪');
+    expect(success).toContain('返回项目官网');
+    expect(success).toContain('href="https://garminpersonalapi.com/zh"');
     expect(success).not.toContain('private-garmin-key');
+  });
+
+  it('does not expose the completion page before Garmin verification succeeds', async () => {
+    const session = await startLocalAuthPage({ locale: 'en', onSubmit: vi.fn() });
+    try {
+      const url = new URL(session.url);
+      const completionUrl = new URL('/complete', url);
+      completionUrl.searchParams.set('lang', 'en');
+      completionUrl.searchParams.set('state', url.searchParams.get('state') ?? '');
+
+      const response = await fetch(completionUrl);
+      const html = await response.text();
+
+      expect(response.status).toBe(403);
+      expect(html).toContain('This authorization link is invalid or has expired.');
+      expect(html).not.toContain('Verification complete');
+    } finally {
+      const rejected = expect(session.completion).rejects.toThrow('cancelled');
+      await session.close();
+      await rejected;
+    }
   });
 
   it('normalizes supported browser and system locales', () => {

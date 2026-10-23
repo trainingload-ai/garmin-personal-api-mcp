@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented here.
 
-## 0.1.0 - Unreleased
+## 0.1.2 - 2026-10-23
+
+- Fix browser authorization forms being rejected when Chrome serializes a privacy-restricted form origin as `null`.
+- Preserve locale and authorization state in retry URLs, and add explicit localized verification-failed and retry actions.
+- Close local authorization connections after the completion page is delivered so the CLI exits cleanly.
+
+## 0.1.1 - 2026-10-23
+
+- Add a localized authorization-complete page with a clear return-to-website action.
+- Force every submitted Personal API key through a fresh Garmin token exchange before saving it, then verify read access against Garmin user settings.
+- Keep the local authorization server alive through the redirect to the completion page and reject direct access before verification.
+
+## 0.1.0 - 2026-10-23
 
 - Add the local, read-only stdio MCP server with 25 Garmin Personal API tools.
 - Add a localized temporary loopback authorization page, terminal fallback, secure API-key storage, Garmin-compatible bearer-token caching, one-time 401 refresh, and diagnostics.

@@ -11,7 +11,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "dev:docs": "pnpm --filter docs dev",
     "dev:mcp": "pnpm --filter @trainingloadai/garmin-personal-api-mcp dev",
-    "lint": "eslint .",
+    "lint": "pnpm --filter docs exec next typegen && eslint .",
     "pack:mcp": "pnpm --filter @trainingloadai/garmin-personal-api-mcp pack",
     "smoke:pack": "node scripts/smoke-packed.mjs",
     "test": "pnpm -r --if-present test",

@@ -81,6 +81,9 @@ async function runAuth(args: string[]): Promise<number> {
     const settings = getRuntimeSettings();
     const validateAndSave = async (apiKey: string) => {
       const tokenProvider = new TokenProvider({ apiKey, settings });
+      // Authorization must validate the key that was just submitted, even when a
+      // bearer token for the same key is still present in the local cache.
+      await tokenProvider.getToken({ forceRefresh: true });
       await new GarminClient({ tokenProvider }).getJson('/userprofile-service/userprofile/settings');
       await writeApiKey(apiKey, settings.apiKeyFile);
       const environmentKey = process.env.GARMIN_PERSONAL_API_KEY?.trim();
