@@ -14,11 +14,11 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "fumadocs-core": "^16.17.7",
-    "fumadocs-mdx": "^15.4.9",
-    "fumadocs-ui": "^16.17.7",
-    "lucide-react": "^0.548.0",
-    "next": "^16.4.2",
+    "fumadocs-core": "^16.17.10",
+    "fumadocs-mdx": "^15.4.10",
+    "fumadocs-ui": "^16.17.10",
+    "lucide-react": "^1.67.0",
+    "next": "^16.4.5",
     "next-intl": "^4.14.9",
     "radix-ui": "^1.8.1",
     "react": "^19.3.1",
@@ -26,12 +26,12 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.4",
     "@types/mdx": "^2.0.13",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "@vitest/coverage-v8": "^4.1.12",
-    "tailwindcss": "^4.3.3",
-    "vitest": "^4.1.12"
+    "@vitest/coverage-v8": "^5.1.0",
+    "tailwindcss": "^4.3.4",
+    "vitest": "^5.1.0"
   }
 }
