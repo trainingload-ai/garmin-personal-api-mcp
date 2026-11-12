@@ -4,9 +4,10 @@ import { getMessagesForLocale } from '@/i18n/messages';
 
 const en = getMessagesForLocale('en');
 const zh = getMessagesForLocale('zh');
+const pt = getMessagesForLocale('pt');
 
 describe('localized landing content', () => {
-  it('keeps the English and Chinese message catalogs structurally aligned', () => {
+  it('keeps the localized message catalogs structurally aligned', () => {
     const collectKeys = (value: unknown, prefix = ''): string[] => {
       if (Array.isArray(value) || value === null || typeof value !== 'object') return [prefix];
 
@@ -16,11 +17,13 @@ describe('localized landing content', () => {
     };
 
     expect(collectKeys(zh)).toEqual(collectKeys(en));
+    expect(collectKeys(pt)).toEqual(collectKeys(en));
   });
 
   it.each([
     ['en', en],
     ['zh', zh],
+    ['pt', pt],
   ] as const)('keeps Garmin Personal API prominent in %s', (_locale, copy) => {
     expect(copy.metadata.title).toContain('Garmin Personal API');
     expect(copy.metadata.description).toContain('Garmin Personal API');

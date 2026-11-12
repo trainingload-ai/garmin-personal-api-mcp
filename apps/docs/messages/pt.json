@@ -1,0 +1,476 @@
+{
+  "metadata": {
+    "title": "Garmin Personal API MCP — Servidor MCP local e somente leitura para Garmin",
+    "description": "Um servidor MCP para Garmin local, somente leitura e de código aberto, com atividades, sono, VFC, Body Battery, frequência cardíaca e dados de bem-estar pela Garmin Personal API oficial.",
+    "keywords": [
+      "Garmin Personal API",
+      "Garmin Personal API MCP",
+      "servidor MCP Garmin",
+      "servidor MCP Garmin Connect",
+      "API de atividades Garmin",
+      "dados FIT Garmin",
+      "servidor MCP local"
+    ]
+  },
+  "common": {
+    "copy": "Copiar",
+    "copied": "Copiado"
+  },
+  "skipToContent": "Pular para o conteúdo principal",
+  "nav": {
+    "label": "Navegação principal",
+    "how": "Como funciona",
+    "quickstart": "Início rápido",
+    "data": "Dados Garmin",
+    "security": "Segurança",
+    "faq": "FAQ",
+    "github": "GitHub",
+    "home": "Início do Garmin Personal API MCP",
+    "language": "Selecionar idioma",
+    "theme": "Selecionar tema de cores",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeSystem": "Sistema",
+    "menu": "Navegação",
+    "menuDescription": "Veja a configuração, os dados Garmin, a privacidade e as perguntas frequentes.",
+    "close": "Fechar"
+  },
+  "hero": {
+    "eyebrow": "Garmin Personal API MCP",
+    "titleLead": "Seus dados Garmin,",
+    "titleAccent": "prontos para perguntar.",
+    "description": "Use a Garmin Personal API oficial para levar suas atividades, sono, VFC, Body Battery, frequência cardíaca e dados de bem-estar a um cliente de IA compatível. O servidor de código aberto roda inteiramente no seu computador e nunca pede sua senha da Garmin.",
+    "start": "Começar localmente",
+    "source": "Ver código-fonte",
+    "commandLabel": "Pedido de configuração para o seu cliente de IA",
+    "trustLabel": "Garantias do Garmin Personal API MCP",
+    "trust": [
+      "25 ferramentas somente leitura",
+      "Roda totalmente local",
+      "Garmin Personal API oficial",
+      "Sem senha da Garmin"
+    ]
+  },
+  "terminal": {
+    "summary": "Exemplos animados mostram um cliente MCP local chamando ferramentas Garmin de recuperação, atividade, sono, VFC, estresse e Body Battery antes de responder em texto simples.",
+    "connected": "conectado",
+    "demo": "demonstração",
+    "scenarios": [
+      {
+        "question": "Como foi minha recuperação ontem?",
+        "calls": [
+          [
+            "garmin_get_day",
+            "Resumo diário e sinais de recuperação"
+          ],
+          [
+            "garmin_get_sleep",
+            "Duração e fases do sono"
+          ],
+          [
+            "garmin_get_hrv",
+            "Status e valores da VFC noturna"
+          ]
+        ],
+        "answer": "Você dormiu 7 h 42 min, a VFC noturna ficou dentro da sua linha de base recente e o Body Battery subiu 61 pontos. Ontem parece ter havido recuperação suficiente para um dia normal de treino, mas isto não é um diagnóstico médico nem de prontidão."
+      },
+      {
+        "question": "Mostre o que mudou no meu último longão.",
+        "calls": [
+          [
+            "garmin_search_activities",
+            "Encontrar a corrida mais recente"
+          ],
+          [
+            "garmin_get_activity",
+            "Ler resumo, distância e tempos"
+          ],
+          [
+            "garmin_get_activity_recording",
+            "Analisar voltas, frequência cardíaca e potência"
+          ]
+        ],
+        "answer": "A corrida teve 18,4 km. Seus últimos 5 km foram 11 s/km mais rápidos, enquanto a frequência cardíaca média subiu 6 bpm. A potência ficou relativamente estável, então o final mais rápido não veio acompanhado de um pico equivalente de potência."
+      },
+      {
+        "question": "Meu sono e meu estresse mudaram esta semana?",
+        "calls": [
+          [
+            "garmin_get_sleep_summaries",
+            "Comparar sete noites de sono"
+          ],
+          [
+            "garmin_get_stress",
+            "Ler resumos diários de estresse"
+          ],
+          [
+            "garmin_get_body_battery",
+            "Verificar padrões de carga e consumo"
+          ]
+        ],
+        "answer": "O sono médio foi 24 minutos menor que na semana anterior e o tempo em estresse alto aumentou em três dias úteis. O Body Battery também começou mais baixo nessas manhãs. É um padrão útil para observar, não prova de uma causa médica."
+      }
+    ]
+  },
+  "how": {
+    "kicker": "Como funciona",
+    "title": "Dados da Garmin Personal API, buscados localmente quando você pergunta.",
+    "description": "Quando você faz uma pergunta, o servidor local busca os dados necessários na Garmin Personal API e devolve o resultado ao seu cliente de IA. Este projeto não usa nenhum intermediário na nuvem e não armazena dados Garmin remotamente; qualquer processamento adicional depende do provedor de IA e da política de privacidade que você escolher.",
+    "flow": [
+      {
+        "index": "01",
+        "title": "Seu cliente MCP local",
+        "description": "Um cliente de IA compatível escolhe uma ferramenta Garmin para a pergunta que você fez. Não é preciso extensão de navegador nem conector hospedado.",
+        "meta": "cliente MCP"
+      },
+      {
+        "index": "02",
+        "title": "O servidor MCP local",
+        "description": "O processo Node.js valida as entradas, controla intervalos de datas e volume de amostras e devolve resultados estruturados ao seu cliente de IA.",
+        "meta": "processo local"
+      },
+      {
+        "index": "03",
+        "title": "Garmin Personal API",
+        "description": "Seu token é enviado por HTTPS diretamente à Garmin Personal API. O servidor expõe apenas operações de leitura.",
+        "meta": "API oficial · HTTPS"
+      }
+    ],
+    "authKicker": "Autenticação sem capturar senha",
+    "authTitle": "Sua chave da Garmin Personal API conclui a autorização no seu computador, não no chat.",
+    "authDescription": "Crie uma chave da Garmin Personal API no Garmin Connect e autorize uma única vez. A CLI guarda a chave e o token de acesso em cache num arquivo local que só você pode ler. Ela nunca usa o fluxo de captura de usuário e senha das integrações antigas com o Garmin Connect.",
+    "facts": [
+      [
+        "Credencial",
+        "Chave da Personal API"
+      ],
+      [
+        "Execução",
+        "totalmente local"
+      ],
+      [
+        "Operações",
+        "GET / somente leitura"
+      ]
+    ]
+  },
+  "projectFacts": {
+    "kicker": "Fatos do projeto",
+    "title": "Garmin Personal API MCP, em termos precisos.",
+    "description": "Um resumo conciso e com fontes para pessoas, buscadores e sistemas de IA.",
+    "items": [
+      {
+        "label": "O que é",
+        "value": "Um servidor MCP de código aberto em Node.js para a Garmin Personal API oficial."
+      },
+      {
+        "label": "Como roda",
+        "value": "Um processo local iniciado pelo seu cliente de IA; não existe endpoint MCP hospedado."
+      },
+      {
+        "label": "Permissões",
+        "value": "25 ferramentas somente leitura baseadas em operações GET da Garmin Personal API."
+      },
+      {
+        "label": "Credenciais",
+        "value": "A chave da Personal API e o token em cache ficam num arquivo acessível só ao seu usuário, no seu computador."
+      },
+      {
+        "label": "Dados cobertos",
+        "value": "Atividades, gravações FIT, sono, VFC, Body Battery, frequência cardíaca, estresse, bem-estar e dados do perfil."
+      },
+      {
+        "label": "Requisitos",
+        "value": "macOS, Windows ou Linux com Node.js 22+ e um cliente de IA capaz de iniciar um servidor MCP local."
+      }
+    ],
+    "sourcesTitle": "Fontes primárias",
+    "sourcesDescription": "Confira a API, o protocolo, o pacote e a implementação nas fontes originais.",
+    "sourceLabels": {
+      "garmin": "Garmin Personal API",
+      "mcp": "Model Context Protocol",
+      "github": "Código-fonte",
+      "npm": "Pacote npm"
+    }
+  },
+  "quickstart": {
+    "kicker": "Início rápido",
+    "title": "Envie uma linha ao seu cliente de IA para conectar à Garmin Personal API.",
+    "description": "Copie o pedido abaixo no Codex, Claude Code, Cursor ou outro cliente de IA que trabalhe localmente. O cliente pode verificar o ambiente, instalar e configurar o pacote, conectar as ferramentas e abrir a página local e privada de autorização; você só digita sua chave da Garmin Personal API lá.",
+    "keyTitle": "Prepare sua chave da Garmin Personal API",
+    "keyDescription": "Crie sua chave da Garmin Personal API na página Personal API Token do Garmin Connect. A Garmin mostra uma chave nova só uma vez, então copie antes de sair, mas nunca cole num chat de IA. Você vai digitá-la numa página privada servida apenas por este computador.",
+    "keyLink": "Abrir configurações do Personal API Token ↗",
+    "agentTitle": "Copie uma linha no seu cliente de IA",
+    "agentDescription": "Codex, Claude Code, Cursor ou outro agente de programação capaz consegue identificar o pacote npm, ler as instruções de configuração e cuidar dos detalhes de cada cliente.",
+    "commandLabel": "Cole no Codex, Claude Code, Cursor ou outro agente",
+    "contractBefore": "O fluxo detalhado e legível por máquina fica no ",
+    "contractLink": "AGENTS.md ↗",
+    "contractAfter": " do repositório, não no seu prompt.",
+    "localTitle": "Conecte na página local",
+    "localDescriptionBefore": "O comando de autorização abre uma página temporária em ",
+    "localDescriptionAfter": ". Cole a chave ali, não no chat. A página valida a chave com a Garmin, salva com permissão só para o seu usuário e depois encerra o servidor local.",
+    "clientHandles": "Seu cliente cuida de",
+    "reloadTitle": "Reinicie o cliente e pergunte",
+    "reloadDescription": "Reinicie uma vez para o cliente carregar as ferramentas Garmin recém-registradas. Depois, pergunte normalmente; não há comandos nem nomes de ferramentas para decorar.",
+    "examplePrompt": "“Resuma meu sono, VFC, Body Battery, estresse e atividades de ontem.”",
+    "docsBefore": "Prefere os detalhes oficiais? Leia o guia de MCP do ",
+    "docsCodex": "Codex",
+    "docsClaude": "Claude Code",
+    "docsCursor": "Cursor",
+    "docsOr": "ou",
+    "docsAfter": "."
+  },
+  "clients": {
+    "kicker": "Configuração manual · avançado",
+    "title": "Prefere configurar você mesmo?",
+    "description": "O fluxo de uma linha acima é o caminho recomendado. Estes comandos exatos são para desenvolvedores que querem inspecionar ou configurar por conta própria a conexão com o processo local.",
+    "transport": "Transporte",
+    "transportValue": "processo local (stdio)",
+    "protocol": "Teste de protocolo",
+    "protocolValue": "Initialize · List Tools · Call Tool",
+    "verified": "Última verificação",
+    "verifiedValue": "23 de outubro de 2026",
+    "note": "Este pacote nunca precisa de URL de servidor, contêiner Docker nem conta hospedada. Reinicie o cliente depois de mudar a configuração MCP.",
+    "tabsLabel": "Configuração MCP por cliente",
+    "source": "A partir do código-fonte",
+    "developmentOnly": "Só para desenvolvimento",
+    "windowsConfig": "Configuração MCP no Windows"
+  },
+  "capabilities": {
+    "kicker": "O que você pode perguntar",
+    "title": "Dados brutos da Garmin, prontos para uma conversa útil.",
+    "description": "Vinte e cinco ferramentas focadas transformam os dados da Garmin Personal API em contexto útil e delimitado, preservando as unidades originais.",
+    "groups": [
+      {
+        "index": "01",
+        "title": "Atividades e FIT",
+        "description": "Busque atividades Garmin, veja as etapas do treino ou decodifique voltas, potência, frequência cardíaca, cadência e registros amostrados do arquivo FIT.",
+        "tools": [
+          "search_activities",
+          "get_activity",
+          "get_activity_recording"
+        ]
+      },
+      {
+        "index": "02",
+        "title": "Recuperação diária",
+        "description": "Reúna sono, VFC, Body Battery, estresse, resumos diários e idade física numa mesma conversa baseada em dados.",
+        "tools": [
+          "get_day",
+          "get_sleep",
+          "get_hrv",
+          "get_body_battery"
+        ]
+      },
+      {
+        "index": "03",
+        "title": "Sono e VFC",
+        "description": "Leia uma noite em detalhe ou compare resumos de sono e de VFC noturna num período recente e delimitado.",
+        "tools": [
+          "get_sleep",
+          "get_sleep_summaries",
+          "get_hrv_summaries"
+        ]
+      },
+      {
+        "index": "04",
+        "title": "Coração e oxigênio",
+        "description": "Consulte resumos de frequência cardíaca, zonas configuradas, frequência cardíaca em repouso e dados de oximetria de pulso.",
+        "tools": [
+          "get_heart_rate",
+          "get_heart_rate_zones",
+          "get_spo2"
+        ]
+      },
+      {
+        "index": "05",
+        "title": "Bem-estar e nutrição",
+        "description": "Leia passos, hidratação, estresse, peso, registros de alimentação, atividades de bem-estar e dados do ciclo menstrual sem gravar nada na conta.",
+        "tools": [
+          "get_steps",
+          "get_hydration",
+          "get_weight",
+          "+ 5 outras"
+        ]
+      },
+      {
+        "index": "06",
+        "title": "Contexto do perfil",
+        "description": "Use as configurações do perfil e a idade física para interpretar os valores da Garmin no contexto da pessoa a quem eles pertencem.",
+        "tools": [
+          "get_profile",
+          "get_heart_rate_zones"
+        ]
+      }
+    ],
+    "tryAsking": "Experimente perguntar",
+    "promptTitle": "Perguntas que conectam seus sinais da Garmin.",
+    "prompts": [
+      [
+        "Prontidão",
+        "Compare minha VFC, sono e Body Battery dos últimos sete dias. O que mudou?"
+      ],
+      [
+        "Treino",
+        "Encontre meu último longão e resuma as voltas, a frequência cardíaca e a deriva de potência."
+      ],
+      [
+        "Hábitos",
+        "Como a duração do sono e o estresse se relacionaram com meu volume de atividade este mês?"
+      ]
+    ]
+  },
+  "data": {
+    "kicker": "Dados da Garmin Personal API",
+    "title": "Uma interface local para perguntas sobre atividade, recuperação e saúde.",
+    "description": "O servidor mapeia os endpoints da Garmin Personal API em vinte e cinco ferramentas MCP bem definidas, e não num único endpoint gigante nem num extrator genérico.",
+    "topics": [
+      {
+        "index": "A",
+        "title": "API de atividades Garmin e gravações FIT",
+        "body": "Busque atividades por data, esporte ou título; veja o resumo da atividade e as etapas do treino; e decodifique o arquivo FIT da Garmin só quando precisar do detalhe das voltas ou das amostras. Potência, ritmo, cadência, frequência cardíaca, temperatura e coordenadas GPS continuam nas unidades originais.",
+        "examples": [
+          "corrida mais recente",
+          "voltas e deriva de potência",
+          "amostras FIT sob demanda"
+        ]
+      },
+      {
+        "index": "B",
+        "title": "Dados de sono, VFC e Body Battery da Garmin",
+        "body": "Leia um único dia ou compare resumos num intervalo delimitado. Fases do sono, VFC noturna, carga e consumo do Body Battery e estresse podem aparecer na mesma resposta, sem fingir que um sinal de bem-estar é um diagnóstico médico.",
+        "examples": [
+          "fases do sono",
+          "resumos de VFC",
+          "tendência do Body Battery"
+        ]
+      },
+      {
+        "index": "C",
+        "title": "Frequência cardíaca e resumos diários de saúde",
+        "body": "Consulte resumos diários, passos, hidratação, agregados de frequência cardíaca contínua, SpO2, peso, registros de alimentação e atividades de bem-estar. As amostras exatas de alta frequência ficam de fora por padrão, para que uma pergunta simples sobre saúde não encha o contexto do modelo.",
+        "examples": [
+          "frequência cardíaca em repouso",
+          "passos e estresse diários",
+          "peso e hidratação"
+        ]
+      },
+      {
+        "index": "D",
+        "title": "Perfil, zonas de frequência cardíaca e contexto físico",
+        "body": "Use o perfil Garmin, as zonas de frequência cardíaca configuradas, a idade física e os dados do ciclo para interpretar um número no contexto da pessoa a quem ele pertence. Toda ferramenta continua sendo apenas de consulta de dados; nenhuma faz diagnóstico nem altera a conta Garmin.",
+        "examples": [
+          "zonas de frequência cardíaca",
+          "idade física",
+          "respostas que consideram o perfil"
+        ]
+      }
+    ],
+    "examplesLabel": "exemplos"
+  },
+  "privacy": {
+    "kicker": "Limite de privacidade",
+    "title": "Um MCP Garmin local com um limite que você pode inspecionar.",
+    "description": "Este projeto não hospeda nem repassa seus dados Garmin. Os resultados das ferramentas entram no cliente e no modelo de IA que você escolher, onde vale a política de privacidade desse provedor.",
+    "link": "Ler a política de segurança ↗",
+    "boundaries": [
+      [
+        "Credenciais ficam locais",
+        "Sua chave da Garmin Personal API e o token de acesso em cache ficam armazenados apenas no seu computador."
+      ],
+      [
+        "Somente leitura por design",
+        "Toda operação Garmin exposta é um GET. Nada é gravado em treinos, dispositivos ou na conta."
+      ],
+      [
+        "Privado por padrão",
+        "Amostras de alta frequência e coordenadas FIT exatas ficam de fora, a menos que você peça explicitamente."
+      ],
+      [
+        "Sem telemetria",
+        "O servidor não tem analytics, relatório de falhas, sistema de contas, banco de dados nem intermediário remoto."
+      ]
+    ]
+  },
+  "faq": {
+    "kicker": "Perguntas frequentes",
+    "title": "Respostas claras sobre a Garmin Personal API e o MCP.",
+    "description": "Respostas exatas sobre chaves de API, funcionamento local, clientes compatíveis, dados de atividade FIT, privacidade e os limites do modo somente leitura.",
+    "answers": "respostas",
+    "items": [
+      {
+        "question": "O que é o Garmin Personal API MCP?",
+        "answer": "É um servidor MCP de código aberto em Node.js que expõe seus próprios dados Garmin como vinte e cinco ferramentas somente leitura. Um cliente de IA compatível o inicia diretamente no seu computador; este projeto não mantém nenhum conector Garmin hospedado."
+      },
+      {
+        "question": "Onde eu crio uma chave da Garmin Personal API?",
+        "answer": "Crie a chave na página de configurações Personal API Token do Garmin Connect e copie na hora, porque a Garmin mostra a chave só uma vez. Depois rode o comando local de autorização. A CLI troca a chave por um token de acesso e guarda os dois apenas num arquivo acessível só ao seu usuário, no seu computador."
+      },
+      {
+        "question": "Ele usa a Garmin Personal API oficial?",
+        "answer": "Sim. O servidor usa a Garmin Personal API oficial para buscar os dados e o FIT SDK oficial da Garmin para as gravações de atividades. Ele não usa um extrator do Garmin Connect baseado em usuário e senha."
+      },
+      {
+        "question": "Ele pode alterar minha conta Garmin ou enviar treinos para um dispositivo?",
+        "answer": "Não. A v0.1 expõe apenas operações de leitura baseadas em endpoints GET da Garmin Personal API. Ela não cria treinos, não atualiza dados do perfil, não muda configurações e não envia conteúdo para dispositivos Garmin."
+      },
+      {
+        "question": "Posso usar este MCP Garmin com Claude Desktop, Cursor, Codex ou VS Code?",
+        "answer": "Sim, desde que o cliente instalado consiga iniciar um servidor MCP local. Esta página tem pedidos de configuração prontos para copiar e colar no Codex, Claude Code e Cursor. Claude Desktop, VS Code e outros clientes com suporte a servidores MCP locais podem usar a configuração genérica com npx da seção de configuração avançada."
+      },
+      {
+        "question": "Meu cliente de IA pode instalar e configurar o Garmin Personal API MCP para mim?",
+        "answer": "Sim. Cole o pedido de configuração no Codex, Claude Code ou Cursor. O agente pode verificar o ambiente local, rodar o pacote, registrar o servidor MCP local e confirmar a conexão. O comando de autorização abre uma página temporária em 127.0.0.1 onde você mesmo digita a chave da API Garmin; a chave nunca deve ir para o chat."
+      },
+      {
+        "question": "Meus dados Garmin ficam totalmente no meu computador?",
+        "answer": "A chave da API, o cache do token e o servidor ficam locais, e este projeto não usa nenhum intermediário. Os resultados das ferramentas são devolvidos ao cliente MCP que você escolheu e podem ser processados pelo modelo dele, sob a política de privacidade desse provedor."
+      },
+      {
+        "question": "Uma IA consegue analisar dados de atividade FIT da Garmin?",
+        "answer": "Sim. A ferramenta de gravação de atividades decodifica voltas, sessões e registros FIT amostrados, como frequência cardíaca, potência, cadência, ritmo, temperatura e coordenadas. Amostras de alta frequência e coordenadas GPS exatas exigem opções explícitas."
+      },
+      {
+        "question": "Quais sistemas operacionais e versões do Node.js são compatíveis?",
+        "answer": "É preciso Node.js 22 ou mais recente no macOS, Windows ou Linux. Clientes no Windows que não conseguem executar o npx diretamente podem iniciá-lo via cmd /c, como mostram as abas de configuração."
+      },
+      {
+        "question": "Por que o servidor MCP Garmin local não iniciou?",
+        "answer": "Rode npx -y @trainingloadai/garmin-personal-api-mcp doctor. Ele verifica o Node.js, a origem da credencial, as permissões dos arquivos locais, a troca do token com a Garmin e uma consulta somente leitura ao perfil, sem iniciar nenhum serviço remoto."
+      }
+    ]
+  },
+  "finalCta": {
+    "kicker": "Um pedido de configuração",
+    "titleLineOne": "Cole uma linha.",
+    "titleLineTwo": "Seu cliente cuida do resto.",
+    "description": "Cole o pedido do pacote no Codex, Claude Code, Cursor ou outro agente capaz. Ele encontra as instruções de configuração, abre a página local e privada de autorização da Garmin Personal API e confirma a conexão.",
+    "commandLabel": "Pedido de configuração",
+    "steps": "Ver os quatro passos",
+    "github": "GitHub"
+  },
+  "footer": {
+    "description": "Pergunte sobre seus dados da Garmin Personal API no cliente de IA que você já usa.",
+    "status": "Totalmente local · Somente leitura",
+    "start": "Começar",
+    "how": "Como funciona",
+    "quickstart": "Início rápido",
+    "clients": "Configuração do cliente",
+    "data": "Dados Garmin",
+    "tools": "25 ferramentas somente leitura",
+    "dataGuide": "Guia de dados",
+    "privacy": "Privacidade e segurança",
+    "faq": "Perguntas frequentes",
+    "project": "Projeto",
+    "github": "GitHub",
+    "npm": "Pacote npm",
+    "contract": "Contrato de configuração para agentes",
+    "security": "Política de segurança",
+    "llms": "Fatos do projeto legíveis por IA",
+    "copyrightBefore": "© 2026 Trainingload.ai · Código aberto sob a ",
+    "license": "Licença MIT",
+    "copyrightAfter": ".",
+    "trademark": "Sem afiliação ou endosso da Garmin. Garmin e Garmin Connect são marcas registradas da Garmin Ltd. ou de suas subsidiárias.",
+    "home": "Início do Garmin Personal API MCP"
+  }
+}

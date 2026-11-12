@@ -5,10 +5,11 @@ import { NextIntlClientProvider } from 'next-intl';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { Locale } from '../lib/content/types';
 import { inter } from '../lib/fonts';
+import { languageTags } from '../lib/seo/url';
 
 export function RootDocument({ children, locale }: { children: ReactNode; locale: Locale }) {
   return (
-    <html className={inter.variable} lang={locale === 'zh' ? 'zh-CN' : 'en'} suppressHydrationWarning>
+    <html className={inter.variable} lang={languageTags[locale]} suppressHydrationWarning>
       <body>
         <RootProvider theme={{ defaultTheme: 'system', disableTransitionOnChange: true, enableSystem: true }}>
           <NextIntlClientProvider locale={locale} messages={null}>

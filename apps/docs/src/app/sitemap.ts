@@ -11,5 +11,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${site.origin}/`, changeFrequency: 'monthly', priority: 1, alternates: { languages } },
     { url: `${site.origin}/zh`, changeFrequency: 'monthly', priority: 0.9, alternates: { languages } },
+    { url: `${site.origin}/pt`, changeFrequency: 'monthly', priority: 0.9, alternates: { languages } },
   ];
 }

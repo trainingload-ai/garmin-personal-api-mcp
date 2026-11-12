@@ -2,12 +2,12 @@ import { getMessagesForLocale } from '@/i18n/messages';
 import type { Locale } from '@/lib/content/types';
 import { site } from '@/lib/site';
 
-import { canonicalUrl } from './url';
+import { canonicalUrl, languageTags } from './url';
 
 export function structuredDataForLocale(locale: Locale) {
   const copy = getMessagesForLocale(locale);
   const url = canonicalUrl(locale);
-  const language = locale === 'zh' ? 'zh-CN' : 'en';
+  const language = languageTags[locale];
   const websiteId = `${site.origin}/#website`;
   const webpageId = `${url}#webpage`;
   const sourceCodeId = `${site.origin}/#source-code`;
@@ -26,7 +26,7 @@ export function structuredDataForLocale(locale: Locale) {
       name: site.name,
       url: site.origin,
       description: site.description,
-      inLanguage: ['en', 'zh-CN'],
+      inLanguage: Object.values(languageTags),
       publisher,
     },
     {

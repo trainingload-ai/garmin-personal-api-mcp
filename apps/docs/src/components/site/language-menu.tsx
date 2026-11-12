@@ -18,6 +18,7 @@ import type { LandingMessages } from '@/lib/content/types';
 const localeOptions = [
   { value: 'en', label: 'English', shortLabel: 'EN' },
   { value: 'zh', label: '简体中文', shortLabel: '简中' },
+  { value: 'pt', label: 'Português (Brasil)', shortLabel: 'PT' },
 ] as const;
 
 export function LanguageMenu({ copy }: { copy: LandingMessages['nav'] }) {

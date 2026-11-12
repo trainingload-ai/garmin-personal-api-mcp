@@ -17,21 +17,24 @@ describe('localized URLs', () => {
     expect(localePath('en', '#quickstart')).toBe('/#quickstart');
     expect(localePath('zh')).toBe('/zh');
     expect(localePath('zh', '#privacy')).toBe('/zh#privacy');
+    expect(localePath('pt', '#faq')).toBe('/pt#faq');
   });
 
-  it('builds canonical and hreflang URLs for only the two public pages', () => {
+  it('builds canonical and hreflang URLs for only the public pages', () => {
     expect(canonicalUrl('en')).toBe('https://garminpersonalapi.com/');
     expect(canonicalUrl('zh')).toBe('https://garminpersonalapi.com/zh');
+    expect(canonicalUrl('pt')).toBe('https://garminpersonalapi.com/pt');
     expect(alternateLanguages()).toEqual({
       en: 'https://garminpersonalapi.com/',
       'zh-CN': 'https://garminpersonalapi.com/zh',
+      'pt-BR': 'https://garminpersonalapi.com/pt',
       'x-default': 'https://garminpersonalapi.com/',
     });
   });
 });
 
 describe('localized metadata', () => {
-  it.each(['en', 'zh'] as const)('includes canonical, hreflang, Open Graph, Twitter, and robots for %s', (locale) => {
+  it.each(['en', 'zh', 'pt'] as const)('includes canonical, hreflang, Open Graph, Twitter, and robots for %s', (locale) => {
     const metadata = createLocalizedMetadata(locale);
     const copy = getMessagesForLocale(locale);
     const imageUrl = createOpenGraphImageUrl(locale);
@@ -55,11 +58,12 @@ describe('localized metadata', () => {
   it('uses a pre-rendered Open Graph image for each locale', () => {
     expect(createOpenGraphImageUrl('en')).toBe('https://garminpersonalapi.com/og/en.png');
     expect(createOpenGraphImageUrl('zh')).toBe('https://garminpersonalapi.com/og/zh.png');
+    expect(createOpenGraphImageUrl('pt')).toBe('https://garminpersonalapi.com/og/pt.png');
   });
 });
 
 describe('structured data', () => {
-  it.each(['en', 'zh'] as const)('shares visible HowTo and FAQ content for %s', (locale) => {
+  it.each(['en', 'zh', 'pt'] as const)('shares visible HowTo and FAQ content for %s', (locale) => {
     const schemas = structuredDataForLocale(locale);
     const copy = getMessagesForLocale(locale);
     const webpage = schemas.find((schema) => schema['@type'] === 'WebPage');
@@ -105,10 +109,11 @@ describe('structured data', () => {
 });
 
 describe('crawl surface', () => {
-  it('publishes only the English and Chinese homepage URLs', () => {
+  it('publishes only the English, Chinese, and Portuguese homepage URLs', () => {
     expect(sitemap().map((entry) => entry.url)).toEqual([
       'https://garminpersonalapi.com/',
       'https://garminpersonalapi.com/zh',
+      'https://garminpersonalapi.com/pt',
     ]);
     expect(robots()).toMatchObject({
       host: 'https://garminpersonalapi.com',

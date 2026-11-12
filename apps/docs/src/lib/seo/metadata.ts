@@ -5,7 +5,7 @@ import type { Locale } from '@/lib/content/types';
 import { site } from '@/lib/site';
 
 import { createOpenGraphImageUrl } from './open-graph';
-import { alternateLanguages, canonicalUrl } from './url';
+import { alternateLanguages, canonicalUrl, openGraphLocales } from './url';
 
 export function createLocalizedMetadata(locale: Locale): Metadata {
   const copy = getMessagesForLocale(locale);
@@ -39,8 +39,8 @@ export function createLocalizedMetadata(locale: Locale): Metadata {
     openGraph: {
       type: 'website',
       url: canonical,
-      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
-      alternateLocale: locale === 'zh' ? ['en_US'] : ['zh_CN'],
+      locale: openGraphLocales[locale],
+      alternateLocale: Object.values(openGraphLocales).filter((value) => value !== openGraphLocales[locale]),
       siteName: site.name,
       title: copy.metadata.title,
       description: copy.metadata.description,

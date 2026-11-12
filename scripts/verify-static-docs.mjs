@@ -16,6 +16,12 @@ const pages = [
     lang: 'zh-CN',
     openGraphImage: 'https://garminpersonalapi.com/og/zh.png',
   },
+  {
+    canonical: 'https://garminpersonalapi.com/pt',
+    file: 'pt.html',
+    lang: 'pt-BR',
+    openGraphImage: 'https://garminpersonalapi.com/og/pt.png',
+  },
 ];
 
 for (const page of pages) {
@@ -27,6 +33,7 @@ for (const page of pages) {
   assert.ok(html.includes('name="twitter:card" content="summary_large_image"'), `${page.file} is missing its Twitter card`);
   assert.ok(html.includes('hrefLang="en"'), `${page.file} is missing the English hreflang`);
   assert.ok(html.includes('hrefLang="zh-CN"'), `${page.file} is missing the Chinese hreflang`);
+  assert.ok(html.includes('hrefLang="pt-BR"'), `${page.file} is missing the Portuguese hreflang`);
   assert.ok(html.includes('hrefLang="x-default"'), `${page.file} is missing the default hreflang`);
   assert.ok(html.includes('type="application/ld+json"'), `${page.file} is missing structured data`);
   assert.ok(html.includes('id="project-facts"'), `${page.file} is missing the citation-ready project facts`);
@@ -38,6 +45,7 @@ await Promise.all([
   access(path.join(outputDirectory, 'icon.svg')),
   access(path.join(outputDirectory, 'og/en.png')),
   access(path.join(outputDirectory, 'og/zh.png')),
+  access(path.join(outputDirectory, 'og/pt.png')),
   access(path.join(outputDirectory, 'robots.txt')),
   access(path.join(outputDirectory, 'sitemap.xml')),
   access(path.join(outputDirectory, 'llms.txt')),
@@ -60,4 +68,4 @@ assert.ok(llmsText.includes(`Current version: ${publicPackage.version}`), 'llms.
 assert.ok(llmsFullText.includes('## 中文摘要'), 'llms-full.txt is missing its Chinese summary');
 assert.ok(llmsFullText.includes('Connect @trainingloadai/garmin-personal-api-mcp'), 'llms-full.txt is missing the setup request');
 
-console.log('Static docs export verified: /, /zh, and GEO resources are ready to deploy.');
+console.log('Static docs export verified: /, /zh, /pt, and GEO resources are ready to deploy.');
