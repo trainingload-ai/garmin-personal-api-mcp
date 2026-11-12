@@ -31,7 +31,7 @@ Fork pull requests run tests but never receive Cloudflare or npm deployment cred
 ## Website deployment
 
 The website is a complete Next.js static export. `pnpm --filter docs build` writes the deployable
-files to `apps/docs/out`, and `pnpm verify:docs` checks the two public routes, locale metadata,
+files to `apps/docs/out`, and `pnpm verify:docs` checks the public routes, locale metadata,
 structured data, and Open Graph assets.
 
 Production deployment runs only after CI succeeds for a push to `main`. Configure the `production`
