@@ -22,13 +22,13 @@
     "verify:docs": "node scripts/verify-static-docs.mjs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@types/node": "^24.10.0",
-    "eslint": "^9.39.2",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
     "husky": "9.1.7",
-    "lint-staged": "16.4.0",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.0",
-    "wrangler": "4.152.0"
+    "lint-staged": "17.6.0",
+    "typescript": "^7.0.2",
+    "typescript-eslint": "^8.72.2",
+    "wrangler": "4.160.0"
   }
 }
